@@ -1,0 +1,121 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(STUDENT)
+  institution  String?
+  course       String?
+  period       String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  mentorProfile MentorProfile?
+  studentOrders Order[]        @relation("StudentOrders")
+  mentorOrders  Order[]        @relation("MentorOrders")
+  messages      Message[]
+  reviewsGiven  Review[]       @relation("ReviewsGiven")
+}
+
+model MentorProfile {
+  id            String  @id @default(cuid())
+  userId        String  @unique
+  bio           String
+  pricePerHour  Float
+  mode          Mode
+  averageRating Float   @default(0)
+  totalReviews  Int     @default(0)
+  approved      Boolean @default(true)
+
+  user     User            @relation(fields: [userId], references: [id])
+  subjects MentorSubject[]
+}
+
+model Subject {
+  id      String          @id @default(cuid())
+  name    String
+  mentors MentorSubject[]
+  orders  Order[]
+}
+
+model MentorSubject {
+  id        String @id @default(cuid())
+  mentorId  String
+  subjectId String
+
+  mentor  MentorProfile @relation(fields: [mentorId], references: [id])
+  subject Subject       @relation(fields: [subjectId], references: [id])
+
+  @@unique([mentorId, subjectId])
+}
+
+model Order {
+  id              String      @id @default(cuid())
+  studentId       String
+  mentorId        String
+  subjectId       String
+  description     String
+  scheduledAt     DateTime
+  durationMinutes Int
+  totalPrice      Float
+  status          OrderStatus @default(PENDING)
+  createdAt       DateTime    @default(now())
+
+  student  User      @relation("StudentOrders", fields: [studentId], references: [id])
+  mentor   User      @relation("MentorOrders", fields: [mentorId], references: [id])
+  subject  Subject   @relation(fields: [subjectId], references: [id])
+  messages Message[]
+  reviews  Review[]
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  orderId   String
+  senderId  String
+  content   String
+  createdAt DateTime @default(now())
+
+  order  Order @relation(fields: [orderId], references: [id])
+  sender User  @relation(fields: [senderId], references: [id])
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  orderId   String   @unique
+  studentId String
+  mentorId  String
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+
+  order   Order @relation(fields: [orderId], references: [id])
+  student User  @relation("ReviewsGiven", fields: [studentId], references: [id])
+}
+
+enum Role {
+  STUDENT
+  MENTOR
+  ADMIN
+}
+
+enum Mode {
+  ONLINE
+  PRESENTIAL
+  BOTH
+}
+
+enum OrderStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  COMPLETED
+  CANCELLED
+}
