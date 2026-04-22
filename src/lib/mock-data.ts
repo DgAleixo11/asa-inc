@@ -1,0 +1,61 @@
+export const mockMentors = [
+  {
+    id: "1",
+    user: {
+      name: "Marina Costa",
+      course: "Engenharia Civil · 7º período",
+      institution: "Universidade Exemplo",
+    },
+    bio: "Tirei 9.5 em Cálculo I e 9.0 em Cálculo II. Ensino do zero, sempre com exercícios da sua prova.",
+    pricePerHour: 25,
+    averageRating: 4.9,
+    totalReviews: 87,
+    online: true,
+    nextSlot: "Hoje, 19h",
+    badges: ["Top tutor", "Resposta rápida"],
+    subjects: [
+      { id: "1", subject: { name: "Cálculo I" } },
+      { id: "2", subject: { name: "Cálculo II" } },
+      { id: "3", subject: { name: "Limites" } },
+    ],
+  },
+  {
+    id: "2",
+    user: {
+      name: "Pedro Alves",
+      course: "Letras · 5º período",
+      institution: "Universidade Exemplo",
+    },
+    bio: "Nota 980 na redação do ENEM. Ajudo com estrutura, argumentação e repertório sociocultural.",
+    pricePerHour: 18,
+    averageRating: 5.0,
+    totalReviews: 142,
+    online: false,
+    nextSlot: "Amanhã, 14h",
+    badges: ["Nota 980"],
+    subjects: [
+      { id: "4", subject: { name: "Redação" } },
+      { id: "5", subject: { name: "ENEM" } },
+    ],
+  },
+  {
+    id: "3",
+    user: {
+      name: "Juliana Rocha",
+      course: "Ciência da Computação · 6º período",
+      institution: "Universidade Exemplo",
+    },
+    bio: "Foco em lógica e projetos práticos. Do zero absoluto ao seu primeiro projeto real em Python.",
+    pricePerHour: 30,
+    averageRating: 4.8,
+    totalReviews: 56,
+    online: true,
+    nextSlot: "Hoje, 21h",
+    badges: ["Projeto final"],
+    subjects: [
+      { id: "6", subject: { name: "Python" } },
+      { id: "7", subject: { name: "Lógica" } },
+      { id: "8", subject: { name: "POO" } },
+    ],
+  },
+];
