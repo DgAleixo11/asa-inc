@@ -1,11 +1,11 @@
 import ResponsiveShell from "@/components/layout/ResponsiveShell";
 import MentorCard from "@/components/cards/MentorCard";
-import { mockMentors } from "@/lib/mock-data";
+import { getMentors } from "@/lib/data/mentors";
 
 const filters = ["Todos", "Cálculo", "Redação", "Python", "Física", "Química"];
 
-export default function MentoresPage() {
-  const mentors = mockMentors;
+export default async function MentoresPage() {
+  const mentors = await getMentors();
 
   return (
     <ResponsiveShell mobileActive="search">

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import ResponsiveShell from "@/components/layout/ResponsiveShell";
 import MetricCard from "@/components/cards/MetricCard";
-import { mockMentors } from "@/lib/mock-data";
+import { getMentorById } from "@/lib/data/mentors";
 
 interface MentorPageProps {
   params: Promise<{
@@ -11,7 +11,7 @@ interface MentorPageProps {
 
 export default async function MentorDetailsPage({ params }: MentorPageProps) {
   const { id } = await params;
-  const mentor = mockMentors.find((item) => item.id === id);
+  const mentor = await getMentorById(id);
 
   if (!mentor) {
     return (
@@ -53,7 +53,9 @@ export default async function MentorDetailsPage({ params }: MentorPageProps) {
               <div>
                 <h1 className="text-3xl font-bold">{mentor.user.name}</h1>
                 <p className="mt-1 text-slate-200">{mentor.user.course}</p>
-                <p className="text-sm text-slate-300">{mentor.user.institution}</p>
+                <p className="text-sm text-slate-300">
+                  {mentor.user.institution}
+                </p>
               </div>
             </div>
 
