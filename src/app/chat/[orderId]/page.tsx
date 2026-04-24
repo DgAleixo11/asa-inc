@@ -1,3 +1,5 @@
+import ResponsiveShell from "@/components/layout/ResponsiveShell";
+
 interface ChatPageProps {
   params: Promise<{
     orderId: string;
@@ -29,7 +31,7 @@ export default async function ChatPage({ params }: ChatPageProps) {
   const { orderId } = await params;
 
   return (
-    <main className="min-h-screen bg-slate-50">
+    <ResponsiveShell mobileActive="chat">
       <section className="border-b border-slate-200 bg-white px-6 py-5">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-4">
           <div>
@@ -101,6 +103,6 @@ export default async function ChatPage({ params }: ChatPageProps) {
           </div>
         </div>
       </section>
-    </main>
+    </ResponsiveShell>
   );
 }

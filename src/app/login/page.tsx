@@ -52,13 +52,28 @@ export default function LoginPage() {
         <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">E-mail</label>
-              <input className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-sky-700" placeholder="seuemail@email.com" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+              <label className="mb-2 block text-sm font-medium text-slate-700">
+                E-mail
+              </label>
+              <input
+                className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-sky-700"
+                placeholder="seuemail@email.com"
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+              />
             </div>
 
             <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">Senha</label>
-              <input type="password" className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-sky-700" placeholder="Sua senha" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
+              <label className="mb-2 block text-sm font-medium text-slate-700">
+                Senha
+              </label>
+              <input
+                type="password"
+                className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-sky-700"
+                placeholder="Sua senha"
+                value={form.password}
+                onChange={(e) => setForm({ ...form, password: e.target.value })}
+              />
             </div>
 
             <button
@@ -77,7 +92,10 @@ export default function LoginPage() {
 
           <div className="mt-6 text-center text-sm text-slate-600">
             Ainda não tem conta?{" "}
-            <Link href="/cadastro" className="font-semibold text-sky-900 hover:text-sky-700">
+            <Link
+              href="/cadastro"
+              className="font-semibold text-sky-900 hover:text-sky-700"
+            >
               Criar conta
             </Link>
           </div>
