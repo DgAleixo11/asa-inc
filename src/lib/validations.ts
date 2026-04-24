@@ -9,11 +9,6 @@ export const registerSchema = z.object({
   period: z.string().optional(),
 });
 
-export const loginSchema = z.object({
-  email: z.string().email("E-mail inválido"),
-  password: z.string().min(6, "Senha inválida"),
-});
-
 export const createOrderSchema = z.object({
   mentorId: z.string().min(1),
   subjectId: z.string().min(1),
@@ -21,18 +16,4 @@ export const createOrderSchema = z.object({
   scheduledAt: z.string().min(1),
   durationMinutes: z.number().min(30),
   totalPrice: z.number().positive(),
-});
-
-export const createMessageSchema = z.object({
-  orderId: z.string().min(1),
-  senderId: z.string().min(1),
-  content: z.string().min(1),
-});
-
-export const createReviewSchema = z.object({
-  orderId: z.string().min(1),
-  studentId: z.string().min(1),
-  mentorId: z.string().min(1),
-  rating: z.number().int().min(1).max(5),
-  comment: z.string().optional(),
 });

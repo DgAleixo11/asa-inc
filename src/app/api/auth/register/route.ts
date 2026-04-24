@@ -9,20 +9,36 @@ export async function POST(req: Request) {
     const parsed = registerSchema.safeParse(body);
 
     if (!parsed.success) {
-      return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+      return NextResponse.json(
+        { error: parsed.error.flatten() },
+        { status: 400 }
+      );
     }
 
     const { name, email, password, institution, course, period } = parsed.data;
-    const existingUser = await prisma.user.findUnique({ where: { email } });
+
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
+    });
 
     if (existingUser) {
-      return NextResponse.json({ error: "Usuário já cadastrado" }, { status: 409 });
+      return NextResponse.json(
+        { error: "Usuário já cadastrado" },
+        { status: 409 }
+      );
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
 
     const user = await prisma.user.create({
-      data: { name, email, passwordHash, institution, course, period },
+      data: {
+        name,
+        email,
+        passwordHash,
+        institution,
+        course,
+        period,
+      },
       select: {
         id: true,
         name: true,
@@ -34,9 +50,15 @@ export async function POST(req: Request) {
       },
     });
 
-    return NextResponse.json({ message: "Usuário criado com sucesso", user }, { status: 201 });
+    return NextResponse.json(
+      { message: "Usuário criado com sucesso", user },
+      { status: 201 }
+    );
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Erro interno do servidor" },
+      { status: 500 }
+    );
   }
 }
