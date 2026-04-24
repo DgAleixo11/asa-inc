@@ -41,7 +41,7 @@ model MentorProfile {
 
 model Subject {
   id      String          @id @default(cuid())
-  name    String
+  name    String          @unique
   mentors MentorSubject[]
   orders  Order[]
 }
