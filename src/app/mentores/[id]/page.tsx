@@ -1,4 +1,6 @@
 import Link from "next/link";
+import ResponsiveShell from "@/components/layout/ResponsiveShell";
+import MetricCard from "@/components/cards/MetricCard";
 import { mockMentors } from "@/lib/mock-data";
 
 interface MentorPageProps {
@@ -13,21 +15,23 @@ export default async function MentorDetailsPage({ params }: MentorPageProps) {
 
   if (!mentor) {
     return (
-      <main className="min-h-screen bg-slate-50 px-6 py-10">
-        <div className="mx-auto max-w-4xl rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-          <h1 className="text-2xl font-bold text-slate-900">
-            Mentor não encontrado
-          </h1>
-          <p className="mt-2 text-slate-600">
-            Não foi possível localizar esse perfil.
-          </p>
-        </div>
-      </main>
+      <ResponsiveShell mobileActive="search">
+        <section className="px-6 py-10">
+          <div className="mx-auto max-w-4xl rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+            <h1 className="text-2xl font-bold text-slate-900">
+              Mentor não encontrado
+            </h1>
+            <p className="mt-2 text-slate-600">
+              Não foi possível localizar esse perfil.
+            </p>
+          </div>
+        </section>
+      </ResponsiveShell>
     );
   }
 
   return (
-    <main className="min-h-screen bg-slate-50">
+    <ResponsiveShell mobileActive="search">
       <section className="bg-gradient-to-br from-sky-900 via-sky-800 to-cyan-700 px-6 pb-10 pt-8 text-white">
         <div className="mx-auto max-w-5xl">
           <Link
@@ -53,7 +57,7 @@ export default async function MentorDetailsPage({ params }: MentorPageProps) {
               </div>
             </div>
 
-            <div className="rounded-2xl bg-white/10 p-4 backdrop-blur">
+            <div className="rounded-2xl bg-white/10 px-5 py-4 backdrop-blur">
               <p className="text-sm text-slate-200">Próximo horário</p>
               <p className="text-lg font-bold">{mentor.nextSlot}</p>
             </div>
@@ -63,26 +67,18 @@ export default async function MentorDetailsPage({ params }: MentorPageProps) {
 
       <section className="mx-auto max-w-5xl px-6 py-8">
         <div className="grid gap-6 md:grid-cols-3">
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <p className="text-sm text-slate-500">Preço por hora</p>
-            <p className="mt-1 text-2xl font-bold text-slate-900">
-              R$ {mentor.pricePerHour.toFixed(2)}
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <p className="text-sm text-slate-500">Nota média</p>
-            <p className="mt-1 text-2xl font-bold text-slate-900">
-              {mentor.averageRating.toFixed(1)}
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <p className="text-sm text-slate-500">Avaliações</p>
-            <p className="mt-1 text-2xl font-bold text-slate-900">
-              {mentor.totalReviews}
-            </p>
-          </div>
+          <MetricCard
+            label="Preço por hora"
+            value={`R$ ${mentor.pricePerHour.toFixed(2)}`}
+          />
+          <MetricCard
+            label="Nota média"
+            value={mentor.averageRating.toFixed(1)}
+          />
+          <MetricCard
+            label="Avaliações"
+            value={String(mentor.totalReviews)}
+          />
         </div>
 
         <div className="mt-6 grid gap-6 lg:grid-cols-[1.4fr_0.9fr]">
@@ -108,17 +104,6 @@ export default async function MentorDetailsPage({ params }: MentorPageProps) {
                 ))}
               </div>
             </div>
-
-            <div className="rounded-3xl border border-cyan-100 bg-cyan-50 p-6">
-              <h2 className="text-lg font-bold text-sky-900">
-                Garantia ASA
-              </h2>
-              <p className="mt-2 text-sm leading-relaxed text-sky-800">
-                Se a primeira aula não te ajudar, a plataforma pode revisar o
-                caso e oferecer suporte. A ideia é garantir mais confiança para
-                quem está aprendendo.
-              </p>
-            </div>
           </div>
 
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -127,8 +112,8 @@ export default async function MentorDetailsPage({ params }: MentorPageProps) {
             </h2>
 
             <p className="mt-2 text-sm text-slate-600">
-              Escolha esse mentor para tirar dúvidas, marcar aula ou pedir
-              ajuda com um conteúdo específico.
+              Escolha esse mentor para tirar dúvidas, marcar aula ou pedir ajuda
+              com um conteúdo específico.
             </p>
 
             <div className="mt-5 flex flex-wrap gap-2">
@@ -142,16 +127,22 @@ export default async function MentorDetailsPage({ params }: MentorPageProps) {
               ))}
             </div>
 
-            <button className="mt-6 w-full rounded-2xl bg-slate-900 px-5 py-3 font-semibold text-white transition hover:bg-slate-800">
+            <Link
+              href={`/pedidos/novo?mentor=${mentor.id}`}
+              className="mt-6 block w-full rounded-2xl bg-slate-900 px-5 py-3 text-center font-semibold text-white transition hover:bg-slate-800"
+            >
               Solicitar agora
-            </button>
+            </Link>
 
-            <button className="mt-3 w-full rounded-2xl border border-slate-300 px-5 py-3 font-semibold text-slate-900 transition hover:bg-slate-50">
+            <Link
+              href={`/chat/123?mentor=${mentor.id}`}
+              className="mt-3 block w-full rounded-2xl border border-slate-300 px-5 py-3 text-center font-semibold text-slate-900 transition hover:bg-slate-50"
+            >
               Enviar mensagem
-            </button>
+            </Link>
           </div>
         </div>
       </section>
-    </main>
+    </ResponsiveShell>
   );
 }

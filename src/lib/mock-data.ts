@@ -1,4 +1,26 @@
-export const mockMentors = [
+export interface MockMentor {
+  id: string;
+  user: {
+    name: string;
+    course: string;
+    institution: string;
+  };
+  bio: string;
+  pricePerHour: number;
+  averageRating: number;
+  totalReviews: number;
+  online: boolean;
+  nextSlot: string;
+  badges: string[];
+  subjects: {
+    id: string;
+    subject: {
+      name: string;
+    };
+  }[];
+}
+
+export const mockMentors: MockMentor[] = [
   {
     id: "1",
     user: {
@@ -6,7 +28,7 @@ export const mockMentors = [
       course: "Engenharia Civil · 7º período",
       institution: "Universidade Exemplo",
     },
-    bio: "Tirei 9.5 em Cálculo I e 9.0 em Cálculo II. Ensino do zero, sempre com exercícios da sua prova.",
+    bio: "Tirei notas altas em Cálculo e ajudo alunos com limites, derivadas e exercícios de prova.",
     pricePerHour: 25,
     averageRating: 4.9,
     totalReviews: 87,
@@ -26,7 +48,7 @@ export const mockMentors = [
       course: "Letras · 5º período",
       institution: "Universidade Exemplo",
     },
-    bio: "Nota 980 na redação do ENEM. Ajudo com estrutura, argumentação e repertório sociocultural.",
+    bio: "Ajudo com redação, repertório e estrutura argumentativa para provas e vestibulares.",
     pricePerHour: 18,
     averageRating: 5.0,
     totalReviews: 142,
@@ -45,7 +67,7 @@ export const mockMentors = [
       course: "Ciência da Computação · 6º período",
       institution: "Universidade Exemplo",
     },
-    bio: "Foco em lógica e projetos práticos. Do zero absoluto ao seu primeiro projeto real em Python.",
+    bio: "Foco em lógica, Python e projetos práticos para quem quer aprender do zero.",
     pricePerHour: 30,
     averageRating: 4.8,
     totalReviews: 56,
