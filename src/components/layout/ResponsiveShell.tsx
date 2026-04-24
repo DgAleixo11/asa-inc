@@ -1,3 +1,6 @@
+import DesktopNavbar from "@/components/navigation/DesktopNavbar";
+import MobileBottomNav from "@/components/navigation/MobileBottomNav";
+
 interface ResponsiveShellProps {
   children: React.ReactNode;
   mobileActive?: "home" | "search" | "chat" | "profile";
@@ -5,6 +8,22 @@ interface ResponsiveShellProps {
 
 export default function ResponsiveShell({
   children,
+  mobileActive = "home",
 }: ResponsiveShellProps) {
-  return <main className="min-h-screen bg-slate-50 text-slate-900">{children}</main>;
+  return (
+    <main className="min-h-screen bg-slate-50 text-slate-900">
+      <div className="hidden md:block">
+        <DesktopNavbar />
+      </div>
+
+      <div className="md:hidden">
+        <div className="mx-auto min-h-screen max-w-md bg-slate-50 shadow-xl">
+          <div className="pb-24">{children}</div>
+          <MobileBottomNav active={mobileActive} />
+        </div>
+      </div>
+
+      <div className="hidden md:block">{children}</div>
+    </main>
+  );
 }
