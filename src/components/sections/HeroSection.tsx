@@ -1,13 +1,16 @@
 import Link from "next/link";
+import SectionBadge from "@/components/ui/SectionBadge";
+import PrimaryButton from "@/components/ui/PrimaryButton";
+import SecondaryButton from "@/components/ui/SecondaryButton";
 
 export default function HeroSection() {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-sky-950 via-sky-900 to-cyan-800 px-6 pb-10 pt-10 text-white md:rounded-b-[2.5rem]">
+    <section className="relative overflow-hidden bg-gradient-to-br from-sky-950 via-sky-900 to-cyan-800 px-6 pb-12 pt-12 text-white">
       <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-cyan-400/20 blur-3xl" />
       <div className="absolute -left-10 bottom-8 h-40 w-40 rounded-full bg-teal-300/10 blur-2xl" />
 
       <div className="relative mx-auto max-w-6xl">
-        <div className="mb-8 flex items-center justify-between md:hidden">
+        <div className="mb-10 flex items-center justify-between md:hidden">
           <div>
             <p className="text-sm font-semibold text-cyan-200">ASA Inc.</p>
             <p className="text-xs text-slate-300">Aprender é evoluir.</p>
@@ -21,40 +24,29 @@ export default function HeroSection() {
           </Link>
         </div>
 
-        <div className="grid gap-10 md:grid-cols-[1.1fr_0.9fr] md:items-center">
+        <div className="grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
           <div className="max-w-2xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal-300">
-              Plataforma acadêmica
-            </p>
+            <SectionBadge>Plataforma acadêmica</SectionBadge>
 
-            <h1 className="mt-4 text-4xl font-bold leading-tight md:text-6xl">
+            <h1 className="mt-5 text-4xl font-bold leading-tight md:text-6xl">
               Alunos ajudando <span className="text-teal-300">alunos</span>
             </h1>
 
-            <p className="mt-4 max-w-xl text-sm leading-relaxed text-slate-200 md:text-lg">
+            <p className="mt-5 max-w-xl text-base leading-relaxed text-slate-200 md:text-lg">
               Encontre alguém que domina a matéria que você precisa ou ensine o
               que você sabe e transforme isso em renda extra.
             </p>
 
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link
-                href="/mentores"
-                className="flex items-center justify-between rounded-2xl bg-teal-400 px-5 py-4 font-semibold text-sky-950 md:inline-flex md:justify-center"
-              >
-                Quero aprender
-              </Link>
-
-              <Link
-                href="/cadastro"
-                className="flex items-center justify-between rounded-2xl border border-white/20 bg-white/10 px-5 py-4 font-semibold text-white backdrop-blur md:inline-flex md:justify-center"
-              >
+            <div className="mt-8 flex flex-wrap gap-3">
+              <PrimaryButton href="/mentores">Quero aprender</PrimaryButton>
+              <SecondaryButton href="/cadastro">
                 Quero ensinar
-              </Link>
+              </SecondaryButton>
             </div>
           </div>
 
           <div className="rounded-[2rem] border border-white/10 bg-white/10 p-4 backdrop-blur">
-            <div className="rounded-[1.5rem] bg-white/10 p-5">
+            <div className="rounded-[1.6rem] bg-white/10 p-5">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal-300">
                 SOS Prova
               </p>
@@ -62,9 +54,19 @@ export default function HeroSection() {
                 Travou numa matéria agora?
               </h2>
               <p className="mt-2 text-sm leading-relaxed text-slate-200">
-                Encontre ajuda rápida com tutores disponíveis, veja avaliações e
-                marque seu atendimento com poucos cliques.
+                Encontre ajuda rápida com tutores disponíveis, veja avaliações
+                e marque seu atendimento com poucos cliques.
               </p>
+
+              <div className="mt-5 rounded-2xl bg-white/10 p-4">
+                <p className="text-sm font-medium">Exemplos de ajuda:</p>
+                <ul className="mt-3 space-y-2 text-sm text-slate-200">
+                  <li>• Revisão para prova</li>
+                  <li>• Resolução de exercícios</li>
+                  <li>• Redação e trabalhos</li>
+                  <li>• Programação e lógica</li>
+                </ul>
+              </div>
 
               <Link
                 href="/mentores"
