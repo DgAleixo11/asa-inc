@@ -17,8 +17,8 @@ export default async function MentorDetailsPage({ params }: MentorPageProps) {
   if (!mentor) {
     return (
       <ResponsiveShell mobileActive="search">
-        <section className="px-6 py-10 md:px-8">
-          <div className="mx-auto max-w-5xl rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+        <section className="px-5 py-8 md:px-8 md:py-10">
+          <div className="mx-auto max-w-7xl rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
             <h1 className="text-2xl font-bold text-slate-900">
               Mentor não encontrado
             </h1>
@@ -33,18 +33,18 @@ export default async function MentorDetailsPage({ params }: MentorPageProps) {
 
   return (
     <ResponsiveShell mobileActive="search">
-      <section className="bg-gradient-to-br from-sky-900 via-sky-800 to-cyan-700 px-6 pb-12 pt-10 text-white md:px-8">
+      <section className="bg-gradient-to-br from-sky-900 via-sky-800 to-cyan-700 px-5 pb-10 pt-8 text-white md:px-8 md:pb-12 md:pt-10">
         <div className="mx-auto max-w-7xl">
           <Link
             href="/mentores"
-            className="mb-8 inline-block text-sm font-medium text-slate-200 hover:text-white"
+            className="mb-6 inline-block text-sm font-medium text-slate-200 hover:text-white"
           >
             ← Voltar para mentores
           </Link>
 
-          <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
-            <div className="flex items-center gap-5">
-              <div className="relative flex h-28 w-28 items-center justify-center rounded-3xl bg-white/15 text-4xl font-bold text-white backdrop-blur">
+          <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
+            <div className="flex items-start gap-4 md:gap-5">
+              <div className="relative flex h-24 w-24 items-center justify-center rounded-3xl bg-white/15 text-3xl font-bold text-white backdrop-blur md:h-28 md:w-28 md:text-4xl">
                 {mentor.user.name.charAt(0)}
                 {mentor.online ? (
                   <span className="absolute bottom-1 right-1 h-5 w-5 rounded-full border-2 border-white bg-emerald-400" />
@@ -52,7 +52,9 @@ export default async function MentorDetailsPage({ params }: MentorPageProps) {
               </div>
 
               <div>
-                <h1 className="text-4xl font-bold">{mentor.user.name}</h1>
+                <h1 className="text-3xl font-bold md:text-4xl">
+                  {mentor.user.name}
+                </h1>
                 <p className="mt-2 text-slate-200">{mentor.user.course}</p>
                 <p className="text-sm text-slate-300">{mentor.user.institution}</p>
 
@@ -65,7 +67,7 @@ export default async function MentorDetailsPage({ params }: MentorPageProps) {
               </div>
             </div>
 
-            <div className="rounded-3xl bg-white/10 p-6 backdrop-blur">
+            <div className="rounded-3xl bg-white/10 p-5 backdrop-blur md:p-6">
               <p className="text-sm text-slate-200">Próximo horário</p>
               <p className="mt-1 text-2xl font-bold">{mentor.nextSlot}</p>
               <p className="mt-3 text-sm text-slate-200">
@@ -76,8 +78,8 @@ export default async function MentorDetailsPage({ params }: MentorPageProps) {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-6 py-10 md:px-8">
-        <div className="grid gap-6 md:grid-cols-3">
+      <section className="mx-auto max-w-7xl px-5 py-8 md:px-8 md:py-10">
+        <div className="grid gap-4 md:grid-cols-3 md:gap-6">
           <MetricCard
             label="Preço por hora"
             value={`R$ ${mentor.pricePerHour.toFixed(2)}`}
@@ -92,14 +94,14 @@ export default async function MentorDetailsPage({ params }: MentorPageProps) {
           />
         </div>
 
-        <div className="mt-8 grid gap-8 lg:grid-cols-[1.4fr_0.8fr]">
+        <div className="mt-8 grid gap-6 lg:grid-cols-[1.4fr_0.8fr] lg:gap-8">
           <div className="space-y-6">
-            <div className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
+            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm md:p-7">
               <h2 className="text-2xl font-bold text-slate-900">Sobre</h2>
               <p className="mt-4 leading-relaxed text-slate-600">{mentor.bio}</p>
             </div>
 
-            <div className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
+            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm md:p-7">
               <h2 className="text-2xl font-bold text-slate-900">Matérias</h2>
 
               <div className="mt-5 flex flex-wrap gap-3">
@@ -115,7 +117,7 @@ export default async function MentorDetailsPage({ params }: MentorPageProps) {
             </div>
           </div>
 
-          <div className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
+          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm md:p-7">
             <h2 className="text-2xl font-bold text-slate-900">
               Solicitar atendimento
             </h2>

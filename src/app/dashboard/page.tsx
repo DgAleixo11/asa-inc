@@ -14,7 +14,7 @@ export default async function DashboardPage() {
   if (!profile) {
     return (
       <ResponsiveShell mobileActive="profile">
-        <section className="px-6 py-10 md:px-8">
+        <section className="px-5 py-8 md:px-8 md:py-10">
           <div className="mx-auto max-w-5xl rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
             <h1 className="text-2xl font-bold text-slate-900">
               Você precisa entrar
@@ -37,25 +37,25 @@ export default async function DashboardPage() {
 
   return (
     <ResponsiveShell mobileActive="profile">
-      <section className="bg-gradient-to-br from-sky-950 via-sky-900 to-cyan-800 px-6 pb-12 pt-10 text-white md:px-8">
+      <section className="bg-gradient-to-br from-sky-950 via-sky-900 to-cyan-800 px-5 pb-10 pt-8 text-white md:px-8 md:pb-12 md:pt-10">
         <div className="mx-auto max-w-7xl">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
             <PageIntro
               eyebrow="ASA Inc."
               title={`Olá, ${profile.name}`}
               description="Acompanhe seus pedidos, conversas, aulas e toda sua experiência dentro da plataforma."
             />
 
-            <div className="rounded-3xl bg-white/10 px-6 py-5 backdrop-blur">
+            <div className="rounded-3xl bg-white/10 px-5 py-4 backdrop-blur md:px-6 md:py-5">
               <p className="text-sm text-slate-200">Perfil atual</p>
-              <p className="text-xl font-bold">{profile.role}</p>
+              <p className="text-lg font-bold md:text-xl">{profile.role}</p>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-6 py-10 md:px-8">
-        <div className="grid gap-6 lg:grid-cols-3">
+      <section className="mx-auto max-w-7xl px-5 py-8 md:px-8 md:py-10">
+        <div className="grid gap-4 md:grid-cols-3 md:gap-6">
           <MetricCard
             label="Pedidos"
             value={String(summary.ordersCount)}
@@ -73,8 +73,8 @@ export default async function DashboardPage() {
           />
         </div>
 
-        <div className="mt-8 grid gap-8 lg:grid-cols-[1.35fr_0.65fr]">
-          <SurfaceCard>
+        <div className="mt-8 grid gap-6 lg:grid-cols-[1.35fr_0.65fr] lg:gap-8">
+          <SurfaceCard className="p-6 md:p-7">
             <div className="mb-6 flex items-center justify-between">
               <h2 className="text-2xl font-bold text-slate-900">
                 Pedidos recentes
@@ -100,7 +100,7 @@ export default async function DashboardPage() {
           </SurfaceCard>
 
           <div className="space-y-6">
-            <SurfaceCard>
+            <SurfaceCard className="p-6 md:p-7">
               <h2 className="text-2xl font-bold text-slate-900">
                 Ações rápidas
               </h2>

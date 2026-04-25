@@ -18,7 +18,7 @@ export default function ResponsiveShell({
       </div>
 
       <div className="md:hidden">
-        <div className="mx-auto min-h-screen max-w-md bg-slate-50 shadow-xl">
+        <div className="mx-auto min-h-screen max-w-md bg-slate-50">
           <div className="pb-28">{children}</div>
           <MobileBottomNav active={mobileActive} />
         </div>

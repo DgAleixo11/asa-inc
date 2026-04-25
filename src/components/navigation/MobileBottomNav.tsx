@@ -10,7 +10,7 @@ export default function MobileBottomNav({
   active = "home",
 }: MobileBottomNavProps) {
   const cls = (key: string) =>
-    `flex min-w-[64px] flex-col items-center gap-1 rounded-2xl px-3 py-2 text-xs font-medium transition ${
+    `flex min-w-[64px] flex-col items-center gap-1 rounded-2xl px-3 py-2 text-[11px] font-medium transition ${
       active === key
         ? "bg-sky-100 text-sky-900"
         : "text-slate-400 hover:bg-slate-100"
