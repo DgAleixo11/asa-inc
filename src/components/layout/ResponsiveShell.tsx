@@ -14,6 +14,7 @@ export default function ResponsiveShell({
     <main className="min-h-screen bg-slate-50 text-slate-900">
       <div className="hidden md:block">
         <DesktopNavbar />
+        <div className="min-h-[calc(100vh-73px)]">{children}</div>
       </div>
 
       <div className="md:hidden">
@@ -22,8 +23,6 @@ export default function ResponsiveShell({
           <MobileBottomNav active={mobileActive} />
         </div>
       </div>
-
-      <div className="hidden md:block">{children}</div>
     </main>
   );
 }
