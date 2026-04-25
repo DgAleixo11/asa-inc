@@ -36,7 +36,7 @@ export default function LoginPage() {
 
   return (
     <ResponsiveShell mobileActive="profile">
-      <section className="bg-gradient-to-br from-sky-950 via-sky-900 to-cyan-800 px-6 pb-12 pt-12 text-white md:px-8">
+      <section className="bg-gradient-to-br from-sky-950 via-sky-900 to-cyan-800 px-6 pb-14 pt-12 text-white md:px-8">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
             <div className="max-w-2xl">
@@ -48,7 +48,7 @@ export default function LoginPage() {
               </h1>
               <p className="mt-4 max-w-xl text-lg leading-relaxed text-slate-200">
                 Acesse sua área para acompanhar pedidos, mensagens, avaliações e
-                sua experiência completa na plataforma.
+                toda sua experiência dentro da plataforma.
               </p>
 
               <div className="mt-8 rounded-3xl border border-white/10 bg-white/10 p-6 backdrop-blur">
@@ -57,9 +57,9 @@ export default function LoginPage() {
                 </p>
 
                 <ul className="mt-4 space-y-3 text-sm text-slate-100">
-                  <li>• acompanhar seus pedidos em tempo real</li>
+                  <li>• acompanhar pedidos em tempo real</li>
                   <li>• conversar com mentores pelo chat</li>
-                  <li>• avaliar atendimentos e organizar sua rotina</li>
+                  <li>• organizar sua jornada acadêmica</li>
                 </ul>
               </div>
             </div>

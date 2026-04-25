@@ -2,6 +2,8 @@ import Link from "next/link";
 import ResponsiveShell from "@/components/layout/ResponsiveShell";
 import MetricCard from "@/components/cards/MetricCard";
 import OrderCard from "@/components/cards/OrderCard";
+import PageIntro from "@/components/ui/PageIntro";
+import SurfaceCard from "@/components/ui/SurfaceCard";
 import { getDashboardSummary } from "@/lib/data/dashboard";
 import { getMyProfile } from "@/lib/data/profile";
 
@@ -38,16 +40,11 @@ export default async function DashboardPage() {
       <section className="bg-gradient-to-br from-sky-950 via-sky-900 to-cyan-800 px-6 pb-12 pt-10 text-white md:px-8">
         <div className="mx-auto max-w-7xl">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-              <p className="text-sm font-medium tracking-wide text-cyan-200">
-                ASA Inc.
-              </p>
-              <h1 className="mt-2 text-5xl font-bold">Olá, {profile.name}</h1>
-              <p className="mt-3 max-w-3xl text-slate-200">
-                Acompanhe seus pedidos, conversas, aulas e toda sua experiência
-                dentro da plataforma.
-              </p>
-            </div>
+            <PageIntro
+              eyebrow="ASA Inc."
+              title={`Olá, ${profile.name}`}
+              description="Acompanhe seus pedidos, conversas, aulas e toda sua experiência dentro da plataforma."
+            />
 
             <div className="rounded-3xl bg-white/10 px-6 py-5 backdrop-blur">
               <p className="text-sm text-slate-200">Perfil atual</p>
@@ -77,7 +74,7 @@ export default async function DashboardPage() {
         </div>
 
         <div className="mt-8 grid gap-8 lg:grid-cols-[1.35fr_0.65fr]">
-          <div className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
+          <SurfaceCard>
             <div className="mb-6 flex items-center justify-between">
               <h2 className="text-2xl font-bold text-slate-900">
                 Pedidos recentes
@@ -100,10 +97,10 @@ export default async function DashboardPage() {
                 ))}
               </div>
             )}
-          </div>
+          </SurfaceCard>
 
           <div className="space-y-6">
-            <div className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
+            <SurfaceCard>
               <h2 className="text-2xl font-bold text-slate-900">
                 Ações rápidas
               </h2>
@@ -130,13 +127,13 @@ export default async function DashboardPage() {
                   Abrir perfil
                 </Link>
               </div>
-            </div>
+            </SurfaceCard>
 
             <div className="rounded-3xl border border-cyan-100 bg-cyan-50 p-6">
               <h2 className="text-lg font-bold text-sky-900">Resumo</h2>
               <p className="mt-2 text-sm leading-relaxed text-sky-800">
-                Sua dashboard agora já está usando dados reais do banco para
-                mostrar o andamento da sua conta.
+                Sua dashboard centraliza o que é mais importante para você
+                acompanhar tudo em um só lugar.
               </p>
             </div>
           </div>

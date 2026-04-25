@@ -1,5 +1,7 @@
 import ResponsiveShell from "@/components/layout/ResponsiveShell";
 import MetricCard from "@/components/cards/MetricCard";
+import PageIntro from "@/components/ui/PageIntro";
+import SurfaceCard from "@/components/ui/SurfaceCard";
 import { getMyProfile } from "@/lib/data/profile";
 
 export default async function PerfilPage() {
@@ -33,11 +35,11 @@ export default async function PerfilPage() {
               </div>
 
               <div>
-                <p className="text-sm font-medium tracking-wide text-cyan-200">
-                  ASA Inc.
-                </p>
-                <h1 className="mt-1 text-4xl font-bold">{profile.name}</h1>
-                <p className="text-sm text-slate-200">{profile.email}</p>
+                <PageIntro
+                  eyebrow="ASA Inc."
+                  title={profile.name}
+                  description={profile.email}
+                />
               </div>
             </div>
 
@@ -69,7 +71,7 @@ export default async function PerfilPage() {
         </div>
 
         <div className="mt-8 grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+          <SurfaceCard>
             <h2 className="text-2xl font-bold text-slate-900">
               Informações acadêmicas
             </h2>
@@ -92,9 +94,9 @@ export default async function PerfilPage() {
                 <p className="font-semibold text-slate-900">{profile.period}</p>
               </div>
             </div>
-          </div>
+          </SurfaceCard>
 
-          <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+          <SurfaceCard>
             <h2 className="text-2xl font-bold text-slate-900">Conta</h2>
 
             <div className="mt-6 space-y-5">
@@ -113,7 +115,7 @@ export default async function PerfilPage() {
                 <p className="font-semibold text-slate-900">{profile.role}</p>
               </div>
             </div>
-          </div>
+          </SurfaceCard>
         </div>
       </section>
     </ResponsiveShell>
