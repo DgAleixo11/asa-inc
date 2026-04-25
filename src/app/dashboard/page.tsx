@@ -1,29 +1,15 @@
-"use client";
-
 import Link from "next/link";
-import { useSession } from "next-auth/react";
 import ResponsiveShell from "@/components/layout/ResponsiveShell";
 import MetricCard from "@/components/cards/MetricCard";
+import OrderCard from "@/components/cards/OrderCard";
+import { getDashboardSummary } from "@/lib/data/dashboard";
+import { getMyProfile } from "@/lib/data/profile";
 
-export default function DashboardPage() {
-  const { data: session, status } = useSession();
+export default async function DashboardPage() {
+  const profile = await getMyProfile();
+  const summary = await getDashboardSummary();
 
-  const userName = session?.user?.name || "Usuário";
-  const userRole = session?.user?.role || "STUDENT";
-
-  if (status === "loading") {
-    return (
-      <ResponsiveShell mobileActive="profile">
-        <section className="px-6 py-10">
-          <div className="mx-auto max-w-4xl rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-            <p className="text-slate-600">Carregando sua dashboard...</p>
-          </div>
-        </section>
-      </ResponsiveShell>
-    );
-  }
-
-  if (!session?.user) {
+  if (!profile) {
     return (
       <ResponsiveShell mobileActive="profile">
         <section className="px-6 py-10">
@@ -56,7 +42,9 @@ export default function DashboardPage() {
               <p className="text-sm font-medium tracking-wide text-cyan-200">
                 ASA Inc.
               </p>
-              <h1 className="mt-2 text-4xl font-bold">Olá, {userName}</h1>
+              <h1 className="mt-2 text-4xl font-bold">
+                Olá, {profile.name}
+              </h1>
               <p className="mt-2 max-w-2xl text-slate-200">
                 Acompanhe seus pedidos, conversas, aulas e toda sua experiência
                 dentro da plataforma.
@@ -65,7 +53,7 @@ export default function DashboardPage() {
 
             <div className="rounded-2xl bg-white/10 px-5 py-4 backdrop-blur">
               <p className="text-sm text-slate-200">Perfil atual</p>
-              <p className="text-lg font-bold">{userRole}</p>
+              <p className="text-lg font-bold">{profile.role}</p>
             </div>
           </div>
         </div>
@@ -74,19 +62,19 @@ export default function DashboardPage() {
       <section className="mx-auto max-w-6xl px-6 py-8">
         <div className="grid gap-6 md:grid-cols-3">
           <MetricCard
-            label="Sessão"
-            value="Ativa"
-            description="Seu login está funcionando normalmente."
-          />
-          <MetricCard
             label="Pedidos"
-            value="Real"
-            description="Seus pedidos agora são salvos no banco."
+            value={String(summary.ordersCount)}
+            description="Total de pedidos registrados na sua conta."
           />
           <MetricCard
-            label="Perfil"
-            value={userRole}
-            description="Seu tipo de perfil atual."
+            label="Chats abertos"
+            value={String(summary.openChats)}
+            description="Pedidos com mensagens registradas."
+          />
+          <MetricCard
+            label="Avaliação média"
+            value={summary.reviewsAverage.toFixed(1)}
+            description="Resumo de reputação atual."
           />
         </div>
 
@@ -94,29 +82,26 @@ export default function DashboardPage() {
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
             <div className="mb-5 flex items-center justify-between">
               <h2 className="text-xl font-bold text-slate-900">
-                Próximos passos
+                Pedidos recentes
               </h2>
+              <Link href="/pedidos" className="text-sm font-medium text-sky-900">
+                Ver todos
+              </Link>
             </div>
 
-            <div className="space-y-4">
+            {summary.recentOrders.length === 0 ? (
               <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                <p className="font-semibold text-slate-900">
-                  Criar seu primeiro pedido
-                </p>
-                <p className="mt-1 text-sm text-slate-500">
-                  Escolha um mentor e registre um atendimento real no banco.
+                <p className="text-sm text-slate-600">
+                  Você ainda não tem pedidos registrados.
                 </p>
               </div>
-
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                <p className="font-semibold text-slate-900">
-                  Testar listagem real
-                </p>
-                <p className="mt-1 text-sm text-slate-500">
-                  Depois de criar um pedido, confira em “Meus pedidos”.
-                </p>
+            ) : (
+              <div className="space-y-4">
+                {summary.recentOrders.map((order) => (
+                  <OrderCard key={order.id} order={order} />
+                ))}
               </div>
-            </div>
+            )}
           </div>
 
           <div className="space-y-6">
@@ -141,12 +126,20 @@ export default function DashboardPage() {
                 </Link>
 
                 <Link
-                  href="/chat/123"
+                  href="/perfil"
                   className="block rounded-2xl border border-slate-300 px-5 py-4 font-semibold text-slate-900 transition hover:bg-slate-50"
                 >
-                  Abrir chat
+                  Abrir perfil
                 </Link>
               </div>
+            </div>
+
+            <div className="rounded-3xl border border-cyan-100 bg-cyan-50 p-6">
+              <h2 className="text-lg font-bold text-sky-900">Resumo</h2>
+              <p className="mt-2 text-sm leading-relaxed text-sky-800">
+                Sua dashboard agora já está usando dados reais do banco para
+                mostrar o andamento da sua conta.
+              </p>
             </div>
           </div>
         </div>

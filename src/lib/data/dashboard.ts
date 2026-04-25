@@ -21,6 +21,7 @@ export async function getDashboardSummary() {
     include: {
       mentor: true,
       subject: true,
+      messages: true,
     },
     orderBy: {
       createdAt: "desc",
@@ -30,7 +31,7 @@ export async function getDashboardSummary() {
 
   return {
     ordersCount: orders.length,
-    openChats: orders.length,
+    openChats: orders.filter((order) => order.messages.length > 0).length,
     reviewsAverage: 4.9,
     recentOrders: orders.map((order) => ({
       id: order.id,
