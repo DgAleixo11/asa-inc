@@ -17,8 +17,8 @@ export default async function MentorDetailsPage({ params }: MentorPageProps) {
   if (!mentor) {
     return (
       <ResponsiveShell mobileActive="search">
-        <section className="px-6 py-10">
-          <div className="mx-auto max-w-4xl rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+        <section className="px-6 py-10 md:px-8">
+          <div className="mx-auto max-w-5xl rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
             <h1 className="text-2xl font-bold text-slate-900">
               Mentor não encontrado
             </h1>
@@ -33,18 +33,18 @@ export default async function MentorDetailsPage({ params }: MentorPageProps) {
 
   return (
     <ResponsiveShell mobileActive="search">
-      <section className="bg-gradient-to-br from-sky-900 via-sky-800 to-cyan-700 px-6 pb-10 pt-8 text-white">
-        <div className="mx-auto max-w-5xl">
+      <section className="bg-gradient-to-br from-sky-900 via-sky-800 to-cyan-700 px-6 pb-12 pt-10 text-white md:px-8">
+        <div className="mx-auto max-w-7xl">
           <Link
             href="/mentores"
-            className="mb-6 inline-block text-sm font-medium text-slate-200 hover:text-white"
+            className="mb-8 inline-block text-sm font-medium text-slate-200 hover:text-white"
           >
             ← Voltar para mentores
           </Link>
 
-          <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-            <div className="flex items-center gap-4">
-              <div className="relative flex h-24 w-24 items-center justify-center rounded-3xl bg-white/15 text-3xl font-bold text-white backdrop-blur">
+          <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
+            <div className="flex items-center gap-5">
+              <div className="relative flex h-28 w-28 items-center justify-center rounded-3xl bg-white/15 text-4xl font-bold text-white backdrop-blur">
                 {mentor.user.name.charAt(0)}
                 {mentor.online ? (
                   <span className="absolute bottom-1 right-1 h-5 w-5 rounded-full border-2 border-white bg-emerald-400" />
@@ -52,12 +52,11 @@ export default async function MentorDetailsPage({ params }: MentorPageProps) {
               </div>
 
               <div>
-                <h1 className="text-3xl font-bold">{mentor.user.name}</h1>
-                <p className="mt-1 text-slate-200">{mentor.user.course}</p>
-                <p className="text-sm text-slate-300">
-                  {mentor.user.institution}
-                </p>
-                <div className="mt-3 flex items-center gap-3">
+                <h1 className="text-4xl font-bold">{mentor.user.name}</h1>
+                <p className="mt-2 text-slate-200">{mentor.user.course}</p>
+                <p className="text-sm text-slate-300">{mentor.user.institution}</p>
+
+                <div className="mt-4 flex items-center gap-3">
                   <StarRating rating={mentor.averageRating} />
                   <span className="text-sm text-slate-200">
                     {mentor.averageRating.toFixed(1)} • {mentor.totalReviews} avaliações
@@ -66,15 +65,18 @@ export default async function MentorDetailsPage({ params }: MentorPageProps) {
               </div>
             </div>
 
-            <div className="rounded-2xl bg-white/10 px-5 py-4 backdrop-blur">
+            <div className="rounded-3xl bg-white/10 p-6 backdrop-blur">
               <p className="text-sm text-slate-200">Próximo horário</p>
-              <p className="text-lg font-bold">{mentor.nextSlot}</p>
+              <p className="mt-1 text-2xl font-bold">{mentor.nextSlot}</p>
+              <p className="mt-3 text-sm text-slate-200">
+                Atendimento rápido e direto com um tutor verificado.
+              </p>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="mx-auto max-w-5xl px-6 py-8">
+      <section className="mx-auto max-w-7xl px-6 py-10 md:px-8">
         <div className="grid gap-6 md:grid-cols-3">
           <MetricCard
             label="Preço por hora"
@@ -90,19 +92,17 @@ export default async function MentorDetailsPage({ params }: MentorPageProps) {
           />
         </div>
 
-        <div className="mt-6 grid gap-6 lg:grid-cols-[1.4fr_0.9fr]">
+        <div className="mt-8 grid gap-8 lg:grid-cols-[1.4fr_0.8fr]">
           <div className="space-y-6">
-            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-              <h2 className="text-xl font-bold text-slate-900">Sobre</h2>
-              <p className="mt-3 leading-relaxed text-slate-600">
-                {mentor.bio}
-              </p>
+            <div className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
+              <h2 className="text-2xl font-bold text-slate-900">Sobre</h2>
+              <p className="mt-4 leading-relaxed text-slate-600">{mentor.bio}</p>
             </div>
 
-            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-              <h2 className="text-xl font-bold text-slate-900">Matérias</h2>
+            <div className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
+              <h2 className="text-2xl font-bold text-slate-900">Matérias</h2>
 
-              <div className="mt-4 flex flex-wrap gap-2">
+              <div className="mt-5 flex flex-wrap gap-3">
                 {mentor.subjects.map((item) => (
                   <span
                     key={item.id}
@@ -115,12 +115,12 @@ export default async function MentorDetailsPage({ params }: MentorPageProps) {
             </div>
           </div>
 
-          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h2 className="text-xl font-bold text-slate-900">
+          <div className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
+            <h2 className="text-2xl font-bold text-slate-900">
               Solicitar atendimento
             </h2>
 
-            <p className="mt-2 text-sm text-slate-600">
+            <p className="mt-3 text-sm leading-relaxed text-slate-600">
               Escolha esse mentor para tirar dúvidas, marcar aula ou pedir ajuda
               com um conteúdo específico.
             </p>
@@ -138,7 +138,7 @@ export default async function MentorDetailsPage({ params }: MentorPageProps) {
 
             <Link
               href={`/pedidos/novo?mentor=${mentor.id}`}
-              className="mt-6 block w-full rounded-2xl bg-slate-900 px-5 py-3 text-center font-semibold text-white transition hover:bg-slate-800"
+              className="mt-8 block w-full rounded-2xl bg-slate-900 px-5 py-3 text-center font-semibold text-white transition hover:bg-slate-800"
             >
               Solicitar agora
             </Link>

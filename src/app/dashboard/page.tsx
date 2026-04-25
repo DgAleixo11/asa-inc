@@ -12,8 +12,8 @@ export default async function DashboardPage() {
   if (!profile) {
     return (
       <ResponsiveShell mobileActive="profile">
-        <section className="px-6 py-10">
-          <div className="mx-auto max-w-4xl rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+        <section className="px-6 py-10 md:px-8">
+          <div className="mx-auto max-w-5xl rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
             <h1 className="text-2xl font-bold text-slate-900">
               Você precisa entrar
             </h1>
@@ -35,32 +35,30 @@ export default async function DashboardPage() {
 
   return (
     <ResponsiveShell mobileActive="profile">
-      <section className="bg-gradient-to-br from-sky-950 via-sky-900 to-cyan-800 px-6 pb-10 pt-10 text-white">
-        <div className="mx-auto max-w-6xl">
-          <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+      <section className="bg-gradient-to-br from-sky-950 via-sky-900 to-cyan-800 px-6 pb-12 pt-10 text-white md:px-8">
+        <div className="mx-auto max-w-7xl">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <p className="text-sm font-medium tracking-wide text-cyan-200">
                 ASA Inc.
               </p>
-              <h1 className="mt-2 text-4xl font-bold">
-                Olá, {profile.name}
-              </h1>
-              <p className="mt-2 max-w-2xl text-slate-200">
+              <h1 className="mt-2 text-5xl font-bold">Olá, {profile.name}</h1>
+              <p className="mt-3 max-w-3xl text-slate-200">
                 Acompanhe seus pedidos, conversas, aulas e toda sua experiência
                 dentro da plataforma.
               </p>
             </div>
 
-            <div className="rounded-2xl bg-white/10 px-5 py-4 backdrop-blur">
+            <div className="rounded-3xl bg-white/10 px-6 py-5 backdrop-blur">
               <p className="text-sm text-slate-200">Perfil atual</p>
-              <p className="text-lg font-bold">{profile.role}</p>
+              <p className="text-xl font-bold">{profile.role}</p>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-6 py-8">
-        <div className="grid gap-6 md:grid-cols-3">
+      <section className="mx-auto max-w-7xl px-6 py-10 md:px-8">
+        <div className="grid gap-6 lg:grid-cols-3">
           <MetricCard
             label="Pedidos"
             value={String(summary.ordersCount)}
@@ -78,10 +76,10 @@ export default async function DashboardPage() {
           />
         </div>
 
-        <div className="mt-8 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
-          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-            <div className="mb-5 flex items-center justify-between">
-              <h2 className="text-xl font-bold text-slate-900">
+        <div className="mt-8 grid gap-8 lg:grid-cols-[1.35fr_0.65fr]">
+          <div className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
+            <div className="mb-6 flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-slate-900">
                 Pedidos recentes
               </h2>
               <Link href="/pedidos" className="text-sm font-medium text-sky-900">
@@ -90,7 +88,7 @@ export default async function DashboardPage() {
             </div>
 
             {summary.recentOrders.length === 0 ? (
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
                 <p className="text-sm text-slate-600">
                   Você ainda não tem pedidos registrados.
                 </p>
@@ -105,8 +103,8 @@ export default async function DashboardPage() {
           </div>
 
           <div className="space-y-6">
-            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-              <h2 className="text-xl font-bold text-slate-900">
+            <div className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
+              <h2 className="text-2xl font-bold text-slate-900">
                 Ações rápidas
               </h2>
 
