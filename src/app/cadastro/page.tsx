@@ -78,51 +78,119 @@ export default function CadastroPage() {
 
   return (
     <ResponsiveShell mobileActive="profile">
-      <section className="bg-gradient-to-br from-sky-950 via-sky-900 to-cyan-800 px-6 pb-10 pt-10 text-white">
-        <div className="mx-auto max-w-5xl">
-          <p className="text-sm font-medium tracking-wide text-cyan-200">
-            ASA Inc.
-          </p>
-          <h1 className="mt-2 text-4xl font-bold">Criar conta</h1>
-          <p className="mt-2 max-w-2xl text-slate-200">
-            Cadastre-se para aprender com outros alunos ou ensinar o que você domina.
-          </p>
-        </div>
-      </section>
+      <section className="bg-gradient-to-br from-sky-950 via-sky-900 to-cyan-800 px-6 pb-12 pt-12 text-white md:px-8">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+            <div className="max-w-2xl">
+              <p className="text-sm font-medium tracking-wide text-cyan-200">
+                ASA Inc.
+              </p>
+              <h1 className="mt-3 text-5xl font-bold leading-tight">
+                Crie sua conta
+              </h1>
+              <p className="mt-4 max-w-xl text-lg leading-relaxed text-slate-200">
+                Cadastre-se para aprender com outros alunos, pedir ajuda rápida
+                e transformar seu conhecimento em oportunidade.
+              </p>
 
-      <section className="mx-auto max-w-2xl px-6 py-8">
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <input className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-sky-700" placeholder="Nome" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-            <input className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-sky-700" placeholder="E-mail" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
-            <input type="password" className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-sky-700" placeholder="Senha" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
-            <input className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-sky-700" placeholder="Instituição" value={form.institution} onChange={(e) => setForm({ ...form, institution: e.target.value })} />
+              <div className="mt-8 rounded-3xl border border-white/10 bg-white/10 p-6 backdrop-blur">
+                <p className="text-sm text-slate-200">
+                  Ao criar sua conta, você poderá:
+                </p>
 
-            <div className="grid gap-4 md:grid-cols-2">
-              <input className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-sky-700" placeholder="Curso" value={form.course} onChange={(e) => setForm({ ...form, course: e.target.value })} />
-              <input className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-sky-700" placeholder="Período" value={form.period} onChange={(e) => setForm({ ...form, period: e.target.value })} />
+                <ul className="mt-4 space-y-3 text-sm text-slate-100">
+                  <li>• buscar mentores por matéria</li>
+                  <li>• abrir pedidos e acompanhar atendimentos</li>
+                  <li>• conversar pelo chat da plataforma</li>
+                </ul>
+              </div>
             </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full rounded-2xl bg-slate-900 px-4 py-3 font-semibold text-white transition hover:bg-slate-800 disabled:opacity-70"
-            >
-              {loading ? "Cadastrando..." : "Criar conta"}
-            </button>
-          </form>
+            <div className="rounded-[2rem] border border-white/10 bg-white/10 p-4 backdrop-blur">
+              <div className="rounded-[1.7rem] bg-white p-8 shadow-2xl">
+                <h2 className="text-2xl font-bold text-slate-900">
+                  Criar conta
+                </h2>
+                <p className="mt-2 text-sm text-slate-600">
+                  Preencha seus dados para começar.
+                </p>
 
-          {message ? (
-            <p className="mt-4 rounded-2xl bg-slate-50 px-4 py-3 text-sm text-slate-700">
-              {message}
-            </p>
-          ) : null}
+                <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+                  <input
+                    className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-sky-700"
+                    placeholder="Nome"
+                    value={form.name}
+                    onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  />
 
-          <div className="mt-6 text-center text-sm text-slate-600">
-            Já tem conta?{" "}
-            <Link href="/login" className="font-semibold text-sky-900 hover:text-sky-700">
-              Entrar
-            </Link>
+                  <input
+                    className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-sky-700"
+                    placeholder="E-mail"
+                    value={form.email}
+                    onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  />
+
+                  <input
+                    type="password"
+                    className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-sky-700"
+                    placeholder="Senha"
+                    value={form.password}
+                    onChange={(e) =>
+                      setForm({ ...form, password: e.target.value })
+                    }
+                  />
+
+                  <input
+                    className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-sky-700"
+                    placeholder="Instituição"
+                    value={form.institution}
+                    onChange={(e) =>
+                      setForm({ ...form, institution: e.target.value })
+                    }
+                  />
+
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <input
+                      className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-sky-700"
+                      placeholder="Curso"
+                      value={form.course}
+                      onChange={(e) => setForm({ ...form, course: e.target.value })}
+                    />
+
+                    <input
+                      className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-sky-700"
+                      placeholder="Período"
+                      value={form.period}
+                      onChange={(e) => setForm({ ...form, period: e.target.value })}
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full rounded-2xl bg-slate-900 px-4 py-3 font-semibold text-white transition hover:bg-slate-800 disabled:opacity-70"
+                  >
+                    {loading ? "Cadastrando..." : "Criar conta"}
+                  </button>
+                </form>
+
+                {message ? (
+                  <p className="mt-4 rounded-2xl bg-slate-50 px-4 py-3 text-sm text-slate-700">
+                    {message}
+                  </p>
+                ) : null}
+
+                <div className="mt-6 text-center text-sm text-slate-600">
+                  Já tem conta?{" "}
+                  <Link
+                    href="/login"
+                    className="font-semibold text-sky-900 hover:text-sky-700"
+                  >
+                    Entrar
+                  </Link>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
