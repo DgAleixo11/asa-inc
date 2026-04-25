@@ -1,15 +1,72 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import ResponsiveShell from "@/components/layout/ResponsiveShell";
+import { mockMentors } from "@/lib/mock-data";
 
 export default function NovoPedidoPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const mentorId = searchParams.get("mentor") ?? "";
+
+  const mentor = useMemo(
+    () => mockMentors.find((item) => item.id === mentorId) ?? mockMentors[0],
+    [mentorId]
+  );
+
   const [form, setForm] = useState({
-    subject: "",
+    subjectId: mentor.subjects[0]?.id ?? "",
     description: "",
     date: "",
-    duration: "",
+    time: "",
+    duration: "60",
   });
+
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    setMessage("");
+
+    try {
+      const scheduledAt = `${form.date}T${form.time}:00`;
+
+      const res = await fetch("/api/orders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          mentorId: mentor.id,
+          subjectId: form.subjectId,
+          description: form.description,
+          scheduledAt,
+          durationMinutes: Number(form.duration),
+          totalPrice: mentor.pricePerHour,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setMessage(
+          typeof data.error === "string"
+            ? data.error
+            : "Não foi possível criar o pedido."
+        );
+        return;
+      }
+
+      router.push("/pedidos");
+    } catch {
+      setMessage("Erro ao conectar com o servidor.");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <ResponsiveShell mobileActive="search">
@@ -26,20 +83,35 @@ export default function NovoPedidoPage() {
       </section>
 
       <section className="mx-auto max-w-3xl px-6 py-8">
+        <div className="mb-6 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+          <p className="text-sm text-slate-500">Mentor selecionado</p>
+          <p className="mt-1 text-xl font-bold text-slate-900">
+            {mentor.user.name}
+          </p>
+          <p className="text-sm text-slate-500">
+            R$ {mentor.pricePerHour.toFixed(2)} por hora
+          </p>
+        </div>
+
         <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <form className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="mb-2 block text-sm font-medium text-slate-700">
                 Matéria
               </label>
-              <input
+              <select
                 className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-sky-700"
-                placeholder="Ex: Cálculo I"
-                value={form.subject}
+                value={form.subjectId}
                 onChange={(e) =>
-                  setForm({ ...form, subject: e.target.value })
+                  setForm({ ...form, subjectId: e.target.value })
                 }
-              />
+              >
+                {mentor.subjects.map((subject) => (
+                  <option key={subject.id} value={subject.id}>
+                    {subject.subject.name}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div>
@@ -56,7 +128,7 @@ export default function NovoPedidoPage() {
               />
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-4 md:grid-cols-3">
               <div>
                 <label className="mb-2 block text-sm font-medium text-slate-700">
                   Data
@@ -71,6 +143,18 @@ export default function NovoPedidoPage() {
 
               <div>
                 <label className="mb-2 block text-sm font-medium text-slate-700">
+                  Hora
+                </label>
+                <input
+                  type="time"
+                  className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-sky-700"
+                  value={form.time}
+                  onChange={(e) => setForm({ ...form, time: e.target.value })}
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-medium text-slate-700">
                   Duração
                 </label>
                 <select
@@ -80,7 +164,6 @@ export default function NovoPedidoPage() {
                     setForm({ ...form, duration: e.target.value })
                   }
                 >
-                  <option value="">Selecione</option>
                   <option value="30">30 minutos</option>
                   <option value="60">1 hora</option>
                   <option value="90">1h30</option>
@@ -89,12 +172,19 @@ export default function NovoPedidoPage() {
             </div>
 
             <button
-              type="button"
-              className="w-full rounded-2xl bg-slate-900 px-4 py-3 font-semibold text-white transition hover:bg-slate-800"
+              type="submit"
+              disabled={loading}
+              className="w-full rounded-2xl bg-slate-900 px-4 py-3 font-semibold text-white transition hover:bg-slate-800 disabled:opacity-70"
             >
-              Continuar pedido
+              {loading ? "Criando pedido..." : "Continuar pedido"}
             </button>
           </form>
+
+          {message ? (
+            <p className="mt-4 rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-700">
+              {message}
+            </p>
+          ) : null}
         </div>
       </section>
     </ResponsiveShell>

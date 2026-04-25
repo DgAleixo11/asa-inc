@@ -1,8 +1,10 @@
 import ResponsiveShell from "@/components/layout/ResponsiveShell";
 import OrderCard from "@/components/cards/OrderCard";
-import { mockOrders } from "@/lib/mock-orders";
+import { getMyOrders } from "@/lib/data/orders";
 
-export default function PedidosPage() {
+export default async function PedidosPage() {
+  const orders = await getMyOrders();
+
   return (
     <ResponsiveShell mobileActive="profile">
       <section className="bg-gradient-to-br from-sky-950 via-sky-900 to-cyan-800 px-6 pb-10 pt-10 text-white">
@@ -22,20 +24,24 @@ export default function PedidosPage() {
           <div>
             <p className="text-sm font-medium text-slate-500">Histórico</p>
             <h2 className="text-2xl font-bold text-slate-900">
-              {mockOrders.length} pedidos encontrados
+              {orders.length} pedidos encontrados
             </h2>
           </div>
-
-          <button className="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-white">
-            Ordenar
-          </button>
         </div>
 
-        <div className="space-y-4">
-          {mockOrders.map((order) => (
-            <OrderCard key={order.id} order={order} />
-          ))}
-        </div>
+        {orders.length === 0 ? (
+          <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+            <p className="text-slate-600">
+              Você ainda não tem pedidos cadastrados.
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {orders.map((order) => (
+              <OrderCard key={order.id} order={order} />
+            ))}
+          </div>
+        )}
       </section>
     </ResponsiveShell>
   );

@@ -4,8 +4,6 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import ResponsiveShell from "@/components/layout/ResponsiveShell";
 import MetricCard from "@/components/cards/MetricCard";
-import OrderCard from "@/components/cards/OrderCard";
-import { mockOrders } from "@/lib/mock-orders";
 
 export default function DashboardPage() {
   const { data: session, status } = useSession();
@@ -76,19 +74,19 @@ export default function DashboardPage() {
       <section className="mx-auto max-w-6xl px-6 py-8">
         <div className="grid gap-6 md:grid-cols-3">
           <MetricCard
-            label="Pedidos ativos"
-            value="2"
-            description="Acompanhe o andamento dos seus atendimentos."
+            label="Sessão"
+            value="Ativa"
+            description="Seu login está funcionando normalmente."
           />
           <MetricCard
-            label="Conversas abertas"
-            value="3"
-            description="Continue suas mensagens com tutores e alunos."
+            label="Pedidos"
+            value="Real"
+            description="Seus pedidos agora são salvos no banco."
           />
           <MetricCard
-            label="Avaliações"
-            value="4.9"
-            description="Sua reputação dentro da plataforma."
+            label="Perfil"
+            value={userRole}
+            description="Seu tipo de perfil atual."
           />
         </div>
 
@@ -96,17 +94,28 @@ export default function DashboardPage() {
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
             <div className="mb-5 flex items-center justify-between">
               <h2 className="text-xl font-bold text-slate-900">
-                Próximos atendimentos
+                Próximos passos
               </h2>
-              <Link href="/pedidos" className="text-sm font-medium text-sky-900">
-                Ver todos
-              </Link>
             </div>
 
             <div className="space-y-4">
-              {mockOrders.slice(0, 2).map((order) => (
-                <OrderCard key={order.id} order={order} />
-              ))}
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <p className="font-semibold text-slate-900">
+                  Criar seu primeiro pedido
+                </p>
+                <p className="mt-1 text-sm text-slate-500">
+                  Escolha um mentor e registre um atendimento real no banco.
+                </p>
+              </div>
+
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <p className="font-semibold text-slate-900">
+                  Testar listagem real
+                </p>
+                <p className="mt-1 text-sm text-slate-500">
+                  Depois de criar um pedido, confira em “Meus pedidos”.
+                </p>
+              </div>
             </div>
           </div>
 
@@ -125,10 +134,10 @@ export default function DashboardPage() {
                 </Link>
 
                 <Link
-                  href="/pedidos/novo"
+                  href="/pedidos"
                   className="block rounded-2xl border border-slate-300 px-5 py-4 font-semibold text-slate-900 transition hover:bg-slate-50"
                 >
-                  Novo pedido
+                  Ver meus pedidos
                 </Link>
 
                 <Link
