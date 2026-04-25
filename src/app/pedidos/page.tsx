@@ -1,3 +1,4 @@
+import Link from "next/link";
 import ResponsiveShell from "@/components/layout/ResponsiveShell";
 import OrderCard from "@/components/cards/OrderCard";
 import { getMyOrders } from "@/lib/data/orders";
@@ -38,7 +39,20 @@ export default async function PedidosPage() {
         ) : (
           <div className="space-y-4">
             {orders.map((order) => (
-              <OrderCard key={order.id} order={order} />
+              <div key={order.id} className="space-y-3">
+                <OrderCard order={order} />
+
+                {order.status === "Concluído" ? (
+                  <div className="flex justify-end">
+                    <Link
+                      href={`/avaliacoes/nova?orderId=${order.id}&mentorId=${order.mentorId}`}
+                      className="rounded-2xl bg-amber-400 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-amber-300"
+                    >
+                      Avaliar atendimento
+                    </Link>
+                  </div>
+                ) : null}
+              </div>
             ))}
           </div>
         )}

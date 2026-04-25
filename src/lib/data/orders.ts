@@ -24,6 +24,7 @@ export async function getMyOrders() {
 
   return orders.map((order) => ({
     id: order.id,
+    mentorId: order.mentorId,
     title: order.subject.name,
     mentorName: order.mentor.name,
     subject: order.subject.name,
@@ -40,6 +41,7 @@ export async function getMyOrders() {
         : "Agendado",
   })) as {
     id: string;
+    mentorId: string;
     title: string;
     mentorName: string;
     subject: string;

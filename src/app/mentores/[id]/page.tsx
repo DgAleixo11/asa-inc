@@ -1,6 +1,7 @@
 import Link from "next/link";
 import ResponsiveShell from "@/components/layout/ResponsiveShell";
 import MetricCard from "@/components/cards/MetricCard";
+import StarRating from "@/components/ui/StarRating";
 import { getMentorById } from "@/lib/data/mentors";
 
 interface MentorPageProps {
@@ -56,6 +57,12 @@ export default async function MentorDetailsPage({ params }: MentorPageProps) {
                 <p className="text-sm text-slate-300">
                   {mentor.user.institution}
                 </p>
+                <div className="mt-3 flex items-center gap-3">
+                  <StarRating rating={mentor.averageRating} />
+                  <span className="text-sm text-slate-200">
+                    {mentor.averageRating.toFixed(1)} • {mentor.totalReviews} avaliações
+                  </span>
+                </div>
               </div>
             </div>
 
