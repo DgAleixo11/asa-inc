@@ -78,22 +78,22 @@ export default function CadastroPage() {
 
   return (
     <ResponsiveShell mobileActive="profile">
-      <section className="bg-gradient-to-br from-sky-950 via-sky-900 to-cyan-800 px-6 pb-14 pt-12 text-white md:px-8">
+      <section className="bg-gradient-to-br from-sky-950 via-sky-900 to-cyan-800 px-5 pb-10 pt-8 text-white md:px-8 md:pb-14 md:pt-12">
         <div className="mx-auto max-w-7xl">
-          <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+          <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
             <div className="max-w-2xl">
               <p className="text-sm font-medium tracking-wide text-cyan-200">
                 ASA Inc.
               </p>
-              <h1 className="mt-3 text-5xl font-bold leading-tight">
+              <h1 className="mt-3 text-4xl font-bold leading-tight md:text-5xl">
                 Crie sua conta
               </h1>
-              <p className="mt-4 max-w-xl text-lg leading-relaxed text-slate-200">
+              <p className="mt-4 max-w-xl text-base leading-relaxed text-slate-200 md:text-lg">
                 Cadastre-se para aprender com outros alunos, pedir ajuda rápida
                 e transformar seu conhecimento em oportunidade.
               </p>
 
-              <div className="mt-8 rounded-3xl border border-white/10 bg-white/10 p-6 backdrop-blur">
+              <div className="mt-6 rounded-3xl border border-white/10 bg-white/10 p-5 backdrop-blur md:mt-8 md:p-6">
                 <p className="text-sm text-slate-200">
                   Ao criar sua conta, você poderá:
                 </p>
@@ -106,8 +106,8 @@ export default function CadastroPage() {
               </div>
             </div>
 
-            <div className="rounded-[2rem] border border-white/10 bg-white/10 p-4 backdrop-blur">
-              <div className="rounded-[1.7rem] bg-white p-8 shadow-2xl">
+            <div className="rounded-[2rem] border border-white/10 bg-white/10 p-3 backdrop-blur md:p-4">
+              <div className="rounded-[1.7rem] bg-white p-6 shadow-2xl md:p-8">
                 <h2 className="text-2xl font-bold text-slate-900">
                   Criar conta
                 </h2>
@@ -149,7 +149,7 @@ export default function CadastroPage() {
                     }
                   />
 
-                  <div className="grid gap-4 md:grid-cols-2">
+                  <div className="grid gap-4">
                     <input
                       className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-sky-700"
                       placeholder="Curso"

@@ -8,20 +8,20 @@ export default async function PedidosPage() {
 
   return (
     <ResponsiveShell mobileActive="profile">
-      <section className="bg-gradient-to-br from-sky-950 via-sky-900 to-cyan-800 px-6 pb-12 pt-10 text-white md:px-8">
+      <section className="bg-gradient-to-br from-sky-950 via-sky-900 to-cyan-800 px-5 pb-10 pt-8 text-white md:px-8 md:pb-12 md:pt-10">
         <div className="mx-auto max-w-7xl">
           <p className="text-sm font-medium tracking-wide text-cyan-200">
             ASA Inc.
           </p>
-          <h1 className="mt-2 text-4xl font-bold">Meus pedidos</h1>
-          <p className="mt-2 max-w-2xl text-slate-200">
+          <h1 className="mt-2 text-4xl font-bold md:text-5xl">Meus pedidos</h1>
+          <p className="mt-3 max-w-2xl text-slate-200">
             Acompanhe seus atendimentos, horários e conversas com mentores.
           </p>
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-6 py-10 md:px-8">
-        <div className="mb-6 flex items-center justify-between">
+      <section className="mx-auto max-w-7xl px-5 py-8 md:px-8 md:py-10">
+        <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
             <p className="text-sm font-medium text-slate-500">Histórico</p>
             <h2 className="text-3xl font-bold text-slate-900">
@@ -38,7 +38,7 @@ export default async function PedidosPage() {
         </div>
 
         {orders.length === 0 ? (
-          <div className="rounded-3xl border border-slate-200 bg-white p-10 shadow-sm">
+          <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm md:p-10">
             <p className="text-slate-600">
               Você ainda não tem pedidos cadastrados.
             </p>
