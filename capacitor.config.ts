@@ -5,8 +5,7 @@ const config: CapacitorConfig = {
   appName: "ASA Inc.",
   webDir: "out",
   server: {
-    /**Colocar a URL do site quando publicar*/
-       url: "https://SEU-SITE-PUBLICADO",
+    url: "https://asa-inc.vercel.app",
     cleartext: true,
   },
 };
