@@ -74,9 +74,9 @@ export default async function DashboardPage() {
         </div>
 
         <div className="mt-8 grid gap-6 lg:grid-cols-[1.35fr_0.65fr] lg:gap-8">
-          <SurfaceCard className="p-6 md:p-7">
-            <div className="mb-6 flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-slate-900">
+          <SurfaceCard className="p-5 md:p-7">
+            <div className="mb-5 flex items-center justify-between">
+              <h2 className="text-xl font-bold text-slate-900 md:text-2xl">
                 Pedidos recentes
               </h2>
               <Link href="/pedidos" className="text-sm font-medium text-sky-900">
@@ -100,36 +100,36 @@ export default async function DashboardPage() {
           </SurfaceCard>
 
           <div className="space-y-6">
-            <SurfaceCard className="p-6 md:p-7">
-              <h2 className="text-2xl font-bold text-slate-900">
+            <SurfaceCard className="p-5 md:p-7">
+              <h2 className="text-xl font-bold text-slate-900 md:text-2xl">
                 Ações rápidas
               </h2>
 
               <div className="mt-5 space-y-3">
                 <Link
                   href="/mentores"
-                  className="block rounded-2xl bg-slate-900 px-5 py-4 font-semibold text-white transition hover:bg-slate-800"
+                  className="block rounded-2xl bg-slate-900 px-5 py-4 text-center font-semibold text-white transition hover:bg-slate-800"
                 >
                   Buscar tutores
                 </Link>
 
                 <Link
                   href="/pedidos"
-                  className="block rounded-2xl border border-slate-300 px-5 py-4 font-semibold text-slate-900 transition hover:bg-slate-50"
+                  className="block rounded-2xl border border-slate-300 px-5 py-4 text-center font-semibold text-slate-900 transition hover:bg-slate-50"
                 >
                   Ver meus pedidos
                 </Link>
 
                 <Link
                   href="/perfil"
-                  className="block rounded-2xl border border-slate-300 px-5 py-4 font-semibold text-slate-900 transition hover:bg-slate-50"
+                  className="block rounded-2xl border border-slate-300 px-5 py-4 text-center font-semibold text-slate-900 transition hover:bg-slate-50"
                 >
                   Abrir perfil
                 </Link>
               </div>
             </SurfaceCard>
 
-            <div className="rounded-3xl border border-cyan-100 bg-cyan-50 p-6">
+            <div className="rounded-3xl border border-cyan-100 bg-cyan-50 p-5 md:p-6">
               <h2 className="text-lg font-bold text-sky-900">Resumo</h2>
               <p className="mt-2 text-sm leading-relaxed text-sky-800">
                 Sua dashboard centraliza o que é mais importante para você
