@@ -54,6 +54,7 @@ export async function GET(req: Request) {
         institution: user.institution,
         course: user.course,
         period: user.period,
+        isActive: user.isActive,
       }))
     );
   } catch (error) {

@@ -33,6 +33,7 @@ type AdminUser = {
   institution: string | null;
   course: string | null;
   period: string | null;
+  isActive: boolean;
 };
 
 export default function AdminPage() {
@@ -60,13 +61,11 @@ export default function AdminPage() {
       }
 
       if (mentorsRes.ok) {
-        const mentorsData = await mentorsRes.json();
-        setMentors(mentorsData);
+        setMentors(await mentorsRes.json());
       }
 
       if (ordersRes.ok) {
-        const ordersData = await ordersRes.json();
-        setOrders(ordersData);
+        setOrders(await ordersRes.json());
       }
     } finally {
       setLoading(false);
@@ -87,8 +86,7 @@ export default function AdminPage() {
     }
 
     if (res.ok) {
-      const data = await res.json();
-      setUsers(data);
+      setUsers(await res.json());
     }
   }
 
@@ -97,9 +95,23 @@ export default function AdminPage() {
       method: "PATCH",
     });
 
-    if (res.ok) {
-      await loadData();
-    }
+    if (res.ok) await loadData();
+  }
+
+  async function deleteMentor(mentorId: string) {
+    const res = await fetch(`/api/admin/mentors/${mentorId}/delete`, {
+      method: "DELETE",
+    });
+
+    if (res.ok) await loadData();
+  }
+
+  async function toggleUserStatus(userId: string) {
+    const res = await fetch(`/api/admin/users/${userId}/toggle-status`, {
+      method: "PATCH",
+    });
+
+    if (res.ok) await loadUsers();
   }
 
   async function updateOrderStatus(orderId: string, status: string) {
@@ -111,9 +123,7 @@ export default function AdminPage() {
       body: JSON.stringify({ status }),
     });
 
-    if (res.ok) {
-      await loadData();
-    }
+    if (res.ok) await loadData();
   }
 
   useEffect(() => {
@@ -129,19 +139,12 @@ export default function AdminPage() {
     [users]
   );
 
-  const mentorsCount = useMemo(
-    () => users.filter((user) => user.role === "MENTOR").length,
-    [users]
-  );
-
   if (unauthorized) {
     return (
       <ResponsiveShell mobileActive="profile">
         <section className="px-5 py-8 md:px-8 md:py-10">
           <div className="mx-auto max-w-4xl rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-            <h1 className="text-2xl font-bold text-slate-900">
-              Acesso negado
-            </h1>
+            <h1 className="text-2xl font-bold text-slate-900">Acesso negado</h1>
             <p className="mt-2 text-slate-600">
               Seu usuário não tem permissão para acessar o painel admin.
             </p>
@@ -171,9 +174,7 @@ export default function AdminPage() {
         <div className="grid gap-4 md:grid-cols-5 md:gap-6">
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
             <p className="text-sm text-slate-500">Mentores</p>
-            <p className="mt-2 text-3xl font-bold text-slate-900">
-              {mentors.length}
-            </p>
+            <p className="mt-2 text-3xl font-bold text-slate-900">{mentors.length}</p>
           </div>
 
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -185,23 +186,17 @@ export default function AdminPage() {
 
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
             <p className="text-sm text-slate-500">Pedidos</p>
-            <p className="mt-2 text-3xl font-bold text-slate-900">
-              {orders.length}
-            </p>
+            <p className="mt-2 text-3xl font-bold text-slate-900">{orders.length}</p>
           </div>
 
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
             <p className="text-sm text-slate-500">Alunos</p>
-            <p className="mt-2 text-3xl font-bold text-slate-900">
-              {studentsCount}
-            </p>
+            <p className="mt-2 text-3xl font-bold text-slate-900">{studentsCount}</p>
           </div>
 
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
             <p className="text-sm text-slate-500">Usuários</p>
-            <p className="mt-2 text-3xl font-bold text-slate-900">
-              {users.length}
-            </p>
+            <p className="mt-2 text-3xl font-bold text-slate-900">{users.length}</p>
           </div>
         </div>
 
@@ -214,15 +209,10 @@ export default function AdminPage() {
             ) : (
               <div className="mt-5 space-y-4">
                 {mentors.map((mentor) => (
-                  <div
-                    key={mentor.id}
-                    className="rounded-2xl border border-slate-200 p-4"
-                  >
+                  <div key={mentor.id} className="rounded-2xl border border-slate-200 p-4">
                     <div className="flex items-start justify-between gap-4">
                       <div>
-                        <p className="font-semibold text-slate-900">
-                          {mentor.name}
-                        </p>
+                        <p className="font-semibold text-slate-900">{mentor.name}</p>
                         <p className="text-sm text-slate-500">{mentor.email}</p>
                         <p className="mt-2 text-sm text-slate-600">
                           {mentor.course || "Curso não informado"}
@@ -243,18 +233,27 @@ export default function AdminPage() {
                           Nota {mentor.averageRating.toFixed(1)}
                         </p>
 
-                        {mentor.approved ? (
-                          <span className="mt-3 inline-block rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
-                            Aprovado
-                          </span>
-                        ) : (
+                        <div className="mt-3 flex flex-col gap-2">
+                          {mentor.approved ? (
+                            <span className="inline-block rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+                              Aprovado
+                            </span>
+                          ) : (
+                            <button
+                              onClick={() => approveMentor(mentor.id)}
+                              className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white"
+                            >
+                              Aprovar
+                            </button>
+                          )}
+
                           <button
-                            onClick={() => approveMentor(mentor.id)}
-                            className="mt-3 rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white"
+                            onClick={() => deleteMentor(mentor.id)}
+                            className="rounded-xl bg-rose-500 px-4 py-2 text-sm font-semibold text-white"
                           >
-                            Aprovar
+                            Remover
                           </button>
-                        )}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -271,19 +270,10 @@ export default function AdminPage() {
             ) : (
               <div className="mt-5 space-y-4">
                 {orders.map((order) => (
-                  <div
-                    key={order.id}
-                    className="rounded-2xl border border-slate-200 p-4"
-                  >
-                    <p className="font-semibold text-slate-900">
-                      {order.subject}
-                    </p>
-                    <p className="mt-1 text-sm text-slate-600">
-                      Aluno: {order.studentName}
-                    </p>
-                    <p className="text-sm text-slate-600">
-                      Mentor: {order.mentorName}
-                    </p>
+                  <div key={order.id} className="rounded-2xl border border-slate-200 p-4">
+                    <p className="font-semibold text-slate-900">{order.subject}</p>
+                    <p className="mt-1 text-sm text-slate-600">Aluno: {order.studentName}</p>
+                    <p className="text-sm text-slate-600">Mentor: {order.mentorName}</p>
                     <p className="text-sm text-slate-600">
                       Data: {new Date(order.scheduledAt).toLocaleString("pt-BR")}
                     </p>
@@ -344,10 +334,7 @@ export default function AdminPage() {
 
             <div className="mt-5 space-y-4">
               {users.map((user) => (
-                <div
-                  key={user.id}
-                  className="rounded-2xl border border-slate-200 p-4"
-                >
+                <div key={user.id} className="rounded-2xl border border-slate-200 p-4">
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <p className="font-semibold text-slate-900">{user.name}</p>
@@ -361,25 +348,44 @@ export default function AdminPage() {
                       <p className="text-sm text-slate-600">
                         {user.period || "Período não informado"}
                       </p>
+
+                      <button
+                        onClick={() => toggleUserStatus(user.id)}
+                        className={`mt-3 rounded-xl px-4 py-2 text-xs font-semibold text-white ${
+                          user.isActive ? "bg-rose-500" : "bg-emerald-500"
+                        }`}
+                      >
+                        {user.isActive ? "Desativar" : "Reativar"}
+                      </button>
                     </div>
 
-                    <span
-                      className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                        user.role === "MENTOR"
-                          ? "bg-cyan-100 text-cyan-700"
-                          : "bg-slate-100 text-slate-700"
-                      }`}
-                    >
-                      {user.role === "MENTOR" ? "Mentor" : "Aluno"}
-                    </span>
+                    <div className="flex flex-col items-end gap-2">
+                      <span
+                        className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                          user.role === "MENTOR"
+                            ? "bg-cyan-100 text-cyan-700"
+                            : "bg-slate-100 text-slate-700"
+                        }`}
+                      >
+                        {user.role === "MENTOR" ? "Mentor" : "Aluno"}
+                      </span>
+
+                      <span
+                        className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                          user.isActive
+                            ? "bg-emerald-100 text-emerald-700"
+                            : "bg-rose-100 text-rose-700"
+                        }`}
+                      >
+                        {user.isActive ? "Ativo" : "Inativo"}
+                      </span>
+                    </div>
                   </div>
                 </div>
               ))}
 
               {users.length === 0 ? (
-                <p className="text-sm text-slate-500">
-                  Nenhum usuário encontrado.
-                </p>
+                <p className="text-sm text-slate-500">Nenhum usuário encontrado.</p>
               ) : null}
             </div>
           </div>
