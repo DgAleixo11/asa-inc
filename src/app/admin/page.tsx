@@ -22,6 +22,7 @@ type AdminOrder = {
   mentorName: string;
   subject: string;
   status: string;
+  rawStatus?: string;
   scheduledAt: string;
 };
 
@@ -42,33 +43,47 @@ export default function AdminPage() {
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [unauthorized, setUnauthorized] = useState(false);
+
   const [userQuery, setUserQuery] = useState("");
   const [userRole, setUserRole] = useState("ALL");
 
-  async function loadData() {
-    setLoading(true);
-    setUnauthorized(false);
+  const [mentorQuery, setMentorQuery] = useState("");
+  const [mentorApproval, setMentorApproval] = useState("ALL");
 
-    try {
-      const [mentorsRes, ordersRes] = await Promise.all([
-        fetch("/api/admin/mentors"),
-        fetch("/api/admin/orders"),
-      ]);
+  const [orderQuery, setOrderQuery] = useState("");
+  const [orderStatus, setOrderStatus] = useState("ALL");
 
-      if (mentorsRes.status === 401 || ordersRes.status === 401) {
-        setUnauthorized(true);
-        return;
-      }
+  async function loadMentors() {
+    const params = new URLSearchParams();
+    if (mentorQuery.trim()) params.set("q", mentorQuery.trim());
+    if (mentorApproval !== "ALL") params.set("approval", mentorApproval);
 
-      if (mentorsRes.ok) {
-        setMentors(await mentorsRes.json());
-      }
+    const res = await fetch(`/api/admin/mentors?${params.toString()}`);
 
-      if (ordersRes.ok) {
-        setOrders(await ordersRes.json());
-      }
-    } finally {
-      setLoading(false);
+    if (res.status === 401) {
+      setUnauthorized(true);
+      return;
+    }
+
+    if (res.ok) {
+      setMentors(await res.json());
+    }
+  }
+
+  async function loadOrders() {
+    const params = new URLSearchParams();
+    if (orderQuery.trim()) params.set("q", orderQuery.trim());
+    if (orderStatus !== "ALL") params.set("status", orderStatus);
+
+    const res = await fetch(`/api/admin/orders?${params.toString()}`);
+
+    if (res.status === 401) {
+      setUnauthorized(true);
+      return;
+    }
+
+    if (res.ok) {
+      setOrders(await res.json());
     }
   }
 
@@ -90,12 +105,23 @@ export default function AdminPage() {
     }
   }
 
+  async function loadData() {
+    setLoading(true);
+    setUnauthorized(false);
+
+    try {
+      await Promise.all([loadMentors(), loadOrders(), loadUsers()]);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   async function approveMentor(mentorId: string) {
     const res = await fetch(`/api/admin/mentors/${mentorId}/approve`, {
       method: "PATCH",
     });
 
-    if (res.ok) await loadData();
+    if (res.ok) await loadMentors();
   }
 
   async function deleteMentor(mentorId: string) {
@@ -103,7 +129,7 @@ export default function AdminPage() {
       method: "DELETE",
     });
 
-    if (res.ok) await loadData();
+    if (res.ok) await loadMentors();
   }
 
   async function toggleUserStatus(userId: string) {
@@ -123,7 +149,7 @@ export default function AdminPage() {
       body: JSON.stringify({ status }),
     });
 
-    if (res.ok) await loadData();
+    if (res.ok) await loadOrders();
   }
 
   useEffect(() => {
@@ -133,6 +159,14 @@ export default function AdminPage() {
   useEffect(() => {
     loadUsers();
   }, [userQuery, userRole]);
+
+  useEffect(() => {
+    loadMentors();
+  }, [mentorQuery, mentorApproval]);
+
+  useEffect(() => {
+    loadOrders();
+  }, [orderQuery, orderStatus]);
 
   const studentsCount = useMemo(
     () => users.filter((user) => user.role === "STUDENT").length,
@@ -204,6 +238,26 @@ export default function AdminPage() {
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
             <h2 className="text-2xl font-bold text-slate-900">Mentores</h2>
 
+            <div className="mt-5 space-y-4">
+              <input
+                type="text"
+                placeholder="Buscar mentor"
+                value={mentorQuery}
+                onChange={(e) => setMentorQuery(e.target.value)}
+                className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400 outline-none transition focus:border-sky-700"
+              />
+
+              <select
+                value={mentorApproval}
+                onChange={(e) => setMentorApproval(e.target.value)}
+                className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-slate-900 outline-none transition focus:border-sky-700"
+              >
+                <option value="ALL">Todos</option>
+                <option value="APPROVED">Aprovados</option>
+                <option value="PENDING">Pendentes</option>
+              </select>
+            </div>
+
             {loading ? (
               <p className="mt-4 text-sm text-slate-500">Carregando...</p>
             ) : (
@@ -258,12 +312,38 @@ export default function AdminPage() {
                     </div>
                   </div>
                 ))}
+
+                {mentors.length === 0 ? (
+                  <p className="text-sm text-slate-500">Nenhum mentor encontrado.</p>
+                ) : null}
               </div>
             )}
           </div>
 
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
             <h2 className="text-2xl font-bold text-slate-900">Pedidos</h2>
+
+            <div className="mt-5 space-y-4">
+              <input
+                type="text"
+                placeholder="Buscar pedido"
+                value={orderQuery}
+                onChange={(e) => setOrderQuery(e.target.value)}
+                className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400 outline-none transition focus:border-sky-700"
+              />
+
+              <select
+                value={orderStatus}
+                onChange={(e) => setOrderStatus(e.target.value)}
+                className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-slate-900 outline-none transition focus:border-sky-700"
+              >
+                <option value="ALL">Todos</option>
+                <option value="PENDING">Pendente</option>
+                <option value="ACCEPTED">Confirmado</option>
+                <option value="COMPLETED">Concluído</option>
+                <option value="CANCELLED">Cancelado</option>
+              </select>
+            </div>
 
             {loading ? (
               <p className="mt-4 text-sm text-slate-500">Carregando...</p>
@@ -305,6 +385,10 @@ export default function AdminPage() {
                     </div>
                   </div>
                 ))}
+
+                {orders.length === 0 ? (
+                  <p className="text-sm text-slate-500">Nenhum pedido encontrado.</p>
+                ) : null}
               </div>
             )}
           </div>

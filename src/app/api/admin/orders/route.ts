@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getAdminSession } from "@/lib/admin";
 import { mapOrderStatus } from "@/lib/mappers/order-status";
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
     const session = await getAdminSession();
 
@@ -11,14 +11,51 @@ export async function GET() {
       return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
+    const { searchParams } = new URL(req.url);
+    const q = searchParams.get("q")?.trim() ?? "";
+    const status = searchParams.get("status")?.trim() ?? "ALL";
+
     const orders = await prisma.order.findMany({
       include: {
         student: true,
         mentor: true,
         subject: true,
       },
+      where: {
+        ...(status !== "ALL" ? { status: status as any } : {}),
+        ...(q
+          ? {
+              OR: [
+                {
+                  student: {
+                    name: {
+                      contains: q,
+                      mode: "insensitive",
+                    },
+                  },
+                },
+                {
+                  mentor: {
+                    name: {
+                      contains: q,
+                      mode: "insensitive",
+                    },
+                  },
+                },
+                {
+                  subject: {
+                    name: {
+                      contains: q,
+                      mode: "insensitive",
+                    },
+                  },
+                },
+              ],
+            }
+          : {}),
+      },
       orderBy: {
-        createdAt: "desc",
+        scheduledAt: "desc",
       },
     });
 
@@ -29,6 +66,7 @@ export async function GET() {
         mentorName: order.mentor.name,
         subject: order.subject.name,
         status: mapOrderStatus(order.status),
+        rawStatus: order.status,
         scheduledAt: order.scheduledAt,
       }))
     );

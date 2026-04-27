@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getAdminSession } from "@/lib/admin";
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
     const session = await getAdminSession();
 
@@ -10,7 +10,22 @@ export async function GET() {
       return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
-    const mentors = await prisma.mentorProfile.findMany();
+    const { searchParams } = new URL(req.url);
+    const q = searchParams.get("q")?.trim() ?? "";
+    const approval = searchParams.get("approval")?.trim() ?? "ALL";
+
+    const mentors = await prisma.mentorProfile.findMany({
+      where: {
+        ...(approval === "APPROVED"
+          ? { approved: true }
+          : approval === "PENDING"
+          ? { approved: false }
+          : {}),
+      },
+      orderBy: {
+        averageRating: "desc",
+      },
+    });
 
     const formatted = await Promise.all(
       mentors.map(async (mentor) => {
@@ -41,7 +56,21 @@ export async function GET() {
       })
     );
 
-    return NextResponse.json(formatted);
+    const filtered = q
+      ? formatted.filter((mentor) => {
+          const query = q.toLowerCase();
+          return (
+            mentor.name.toLowerCase().includes(query) ||
+            mentor.email.toLowerCase().includes(query) ||
+            (mentor.course ?? "").toLowerCase().includes(query) ||
+            mentor.subjects.some((subject) =>
+              subject.toLowerCase().includes(query)
+            )
+          );
+        })
+      : formatted;
+
+    return NextResponse.json(filtered);
   } catch (error) {
     console.error(error);
     return NextResponse.json(
