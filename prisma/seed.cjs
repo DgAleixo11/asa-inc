@@ -1,23 +1,8 @@
 require("dotenv/config");
 const bcrypt = require("bcryptjs");
-const { PrismaPg } = require("@prisma/adapter-pg");
-const pkg = require("@prisma/client");
+const { PrismaClient } = require("@prisma/client");
 
-const PrismaClient = pkg.PrismaClient || pkg.default?.PrismaClient;
-
-if (!PrismaClient) {
-  throw new Error("PrismaClient não foi encontrado em @prisma/client");
-}
-
-const connectionString = process.env.DATABASE_URL;
-
-if (!connectionString) {
-  throw new Error("DATABASE_URL não está definida.");
-}
-
-const prisma = new PrismaClient({
-  adapter: new PrismaPg({ connectionString }),
-});
+const prisma = new PrismaClient();
 
 async function main() {
   const hashed = await bcrypt.hash("123456", 10);
