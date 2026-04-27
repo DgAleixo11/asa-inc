@@ -76,6 +76,9 @@ export default function CadastroPage() {
     }
   }
 
+  const inputClassName =
+    "w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder-slate-400 outline-none transition focus:border-sky-700";
+
   return (
     <ResponsiveShell mobileActive="profile">
       <section className="bg-gradient-to-br from-sky-950 via-sky-900 to-cyan-800 px-5 pb-10 pt-8 text-white md:px-8 md:pb-14 md:pt-12">
@@ -117,14 +120,14 @@ export default function CadastroPage() {
 
                 <form onSubmit={handleSubmit} className="mt-6 space-y-4">
                   <input
-                    className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-sky-700"
+                    className={inputClassName}
                     placeholder="Nome"
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
                   />
 
                   <input
-                    className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-sky-700"
+                    className={inputClassName}
                     placeholder="E-mail"
                     value={form.email}
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
@@ -132,7 +135,7 @@ export default function CadastroPage() {
 
                   <input
                     type="password"
-                    className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-sky-700"
+                    className={inputClassName}
                     placeholder="Senha"
                     value={form.password}
                     onChange={(e) =>
@@ -141,7 +144,7 @@ export default function CadastroPage() {
                   />
 
                   <input
-                    className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-sky-700"
+                    className={inputClassName}
                     placeholder="Instituição"
                     value={form.institution}
                     onChange={(e) =>
@@ -151,14 +154,14 @@ export default function CadastroPage() {
 
                   <div className="grid gap-4">
                     <input
-                      className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-sky-700"
+                      className={inputClassName}
                       placeholder="Curso"
                       value={form.course}
                       onChange={(e) => setForm({ ...form, course: e.target.value })}
                     />
 
                     <input
-                      className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-sky-700"
+                      className={inputClassName}
                       placeholder="Período"
                       value={form.period}
                       onChange={(e) => setForm({ ...form, period: e.target.value })}
