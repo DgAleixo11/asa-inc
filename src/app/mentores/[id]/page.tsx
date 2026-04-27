@@ -2,6 +2,7 @@ import Link from "next/link";
 import ResponsiveShell from "@/components/layout/ResponsiveShell";
 import MetricCard from "@/components/cards/MetricCard";
 import StarRating from "@/components/ui/StarRating";
+import MentorReviews from "@/components/reviews/MentorReviews";
 import { getMentorById } from "@/lib/data/mentors";
 
 interface MentorPageProps {
@@ -113,6 +114,13 @@ export default async function MentorDetailsPage({ params }: MentorPageProps) {
                     {item.subject.name}
                   </span>
                 ))}
+              </div>
+            </div>
+
+            <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6 md:p-7">
+              <h2 className="text-2xl font-bold text-slate-900">Avaliações</h2>
+              <div className="mt-5">
+                <MentorReviews mentorId={mentor.id} />
               </div>
             </div>
           </div>

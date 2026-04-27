@@ -35,17 +35,29 @@ export default function ChatPage({ params }: ChatPageProps) {
   }, [params]);
 
   useEffect(() => {
+    let interval: NodeJS.Timeout;
+
     async function loadMessages() {
       if (!orderId) return;
 
-      const res = await fetch(`/api/orders/${orderId}/messages`);
+      const res = await fetch(`/api/orders/${orderId}/messages`, {
+        cache: "no-store",
+      });
+
       if (!res.ok) return;
 
       const data = await res.json();
       setMessages(data);
     }
 
-    loadMessages();
+    if (orderId) {
+      loadMessages();
+      interval = setInterval(loadMessages, 4000);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
   }, [orderId]);
 
   async function handleSend(e: React.FormEvent) {
@@ -103,7 +115,7 @@ export default function ChatPage({ params }: ChatPageProps) {
 
           <div className="hidden rounded-2xl bg-slate-100 px-4 py-3 text-right md:block">
             <p className="text-sm font-semibold text-slate-900">Chat real</p>
-            <p className="text-xs text-slate-500">Mensagens salvas no banco</p>
+            <p className="text-xs text-slate-500">Atualização automática</p>
           </div>
         </div>
       </section>
@@ -162,7 +174,7 @@ export default function ChatPage({ params }: ChatPageProps) {
                 placeholder="Digite sua mensagem"
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
-                className="flex-1 rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-sky-700"
+                className="flex-1 rounded-2xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400 outline-none transition focus:border-sky-700"
               />
               <button
                 type="submit"
