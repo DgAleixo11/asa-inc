@@ -1,73 +1,93 @@
 # ASA Inc.
 
-Plataforma digital que conecta alunos que precisam de ajuda acadêmica com outros alunos que podem oferecer suporte em matérias, trabalhos, resumos e monitorias por um preço acessível.
+Plataforma acadêmica para conectar alunos que precisam de ajuda com alunos que podem ensinar.
 
-A proposta do projeto é unir aprendizado, acessibilidade e renda extra, criando um ambiente simples, intuitivo e seguro para estudantes.
+A proposta do projeto é permitir que estudantes encontrem mentores para matérias específicas, criem pedidos de atendimento, conversem por chat, avaliem a experiência e acompanhem tudo em uma dashboard.
 
-## Sobre o projeto
+---
 
-A ASA Inc. foi idealizada para resolver dois problemas muito comuns no ambiente estudantil:
+## Tecnologias usadas
 
-- alunos que têm dificuldade em determinadas matérias e precisam de ajuda rápida e acessível
-- alunos que dominam certos conteúdos e gostariam de transformar esse conhecimento em uma fonte de renda extra
-
-A plataforma funciona como um marketplace acadêmico, onde um estudante pode encontrar outro estudante para prestar suporte em atividades como reforço em matérias, explicações individuais, monitorias, ajuda para provas, resumos e orientação em trabalhos.
-
-## Objetivo
-
-Desenvolver uma aplicação web responsiva que permita a intermediação de serviços acadêmicos entre alunos, oferecendo uma experiência simples, acessível e eficiente.
-
-## Tecnologias utilizadas
-
-### Front-end
 - Next.js
-- React
 - TypeScript
 - Tailwind CSS
-
-### Back-end
-- Next.js API Routes
-- Prisma ORM
-
-### Banco de dados
-- PostgreSQL
-
-### Validação e formulários
+- Prisma
+- PostgreSQL (Neon)
+- NextAuth
 - Zod
-- React Hook Form
+
+---
+
+## Funcionalidades atuais
 
 ### Autenticação
-- NextAuth / Auth.js
+- Cadastro de usuário
+- Login com credenciais
+- Sessão com NextAuth
+- Perfil do usuário logado
 
-## Estrutura de pastas
+### Mentores
+- Listagem de mentores
+- Página de detalhes do mentor
+- Exibição de matérias, preço, nota e avaliações
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### Pedidos
+- Criação de pedido
+- Listagem de pedidos do usuário logado
+- Exibição de status do pedido
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Chat
+- Envio de mensagens
+- Listagem de mensagens por pedido
+- Chat salvo no banco
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Dashboard
+- Resumo com dados reais
+- Pedidos recentes
+- Contagem de chats
+- Métricas principais
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Avaliações
+- Rota criada para enviar avaliação
+- Atualização de média e total de avaliações do mentor
 
-## Learn More
+### Interface
+- Layout desktop
+- Layout mobile
+- Navbar desktop
+- Bottom navigation mobile
+- Home responsiva
+- Páginas principais padronizadas
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Estrutura principal do projeto
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash id="13003"
+src/
+  app/
+    api/
+    avaliacoes/
+    cadastro/
+    chat/
+    dashboard/
+    login/
+    mentores/
+    pedidos/
+    perfil/
+  components/
+    cards/
+    layout/
+    navigation/
+    sections/
+    ui/
+    providers/
+  config/
+  lib/
+    data/
+    mappers/
+  types/
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+prisma/
+  schema.prisma
+  seed.ts
