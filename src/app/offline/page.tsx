@@ -9,16 +9,25 @@ export default function OfflinePage() {
           Você está offline
         </h1>
         <p className="mt-3 text-slate-600">
-          Verifique sua conexão para continuar usando todos os recursos da
-          plataforma.
+          Sua conexão caiu. Algumas páginas salvas ainda podem abrir, mas para
+          usar todos os recursos você precisa voltar para a internet.
         </p>
 
-        <Link
-          href="/"
-          className="mt-6 inline-flex rounded-2xl bg-slate-900 px-5 py-3 font-semibold text-white"
-        >
-          Tentar novamente
-        </Link>
+        <div className="mt-6 flex flex-col gap-3">
+          <Link
+            href="/"
+            className="inline-flex items-center justify-center rounded-2xl bg-slate-900 px-5 py-3 font-semibold text-white"
+          >
+            Tentar novamente
+          </Link>
+
+          <Link
+            href="/dashboard"
+            className="inline-flex items-center justify-center rounded-2xl border border-slate-300 px-5 py-3 font-semibold text-slate-900"
+          >
+            Ir para dashboard
+          </Link>
+        </div>
       </div>
     </main>
   );

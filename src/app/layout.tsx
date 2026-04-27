@@ -1,6 +1,7 @@
 import "./globals.css";
 import type { Metadata, Viewport } from "next";
 import AuthProvider from "@/components/providers/AuthProvider";
+import PwaProvider from "@/components/providers/PwaProvider";
 
 export const metadata: Metadata = {
   title: "ASA Inc.",
@@ -36,7 +37,10 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body>
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <PwaProvider />
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );
