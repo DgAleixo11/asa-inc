@@ -1,10 +1,53 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import ResponsiveShell from "@/components/layout/ResponsiveShell";
 import OrderCard from "@/components/cards/OrderCard";
-import { getMyOrders } from "@/lib/data/orders";
 
-export default async function PedidosPage() {
-  const orders = await getMyOrders();
+type OrderItem = {
+  id: string;
+  mentorId: string;
+  title: string;
+  mentorName: string;
+  subject: string;
+  date: string;
+  status: "Confirmado" | "Pendente" | "Agendado" | "Concluído" | "Cancelado";
+};
+
+export default function PedidosPage() {
+  const [orders, setOrders] = useState<OrderItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  async function loadOrders() {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/my-orders");
+      if (!res.ok) throw new Error("Erro ao buscar pedidos");
+      const data = await res.json();
+      setOrders(data);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function updateOrderStatus(orderId: string, status: string) {
+    const res = await fetch(`/api/orders/${orderId}/status`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ status }),
+    });
+
+    if (res.ok) {
+      await loadOrders();
+    }
+  }
+
+  useEffect(() => {
+    loadOrders();
+  }, []);
 
   return (
     <ResponsiveShell mobileActive="profile">
@@ -25,7 +68,7 @@ export default async function PedidosPage() {
           <div>
             <p className="text-sm font-medium text-slate-500">Histórico</p>
             <h2 className="text-3xl font-bold text-slate-900">
-              {orders.length} pedidos encontrados
+              {loading ? "Carregando..." : `${orders.length} pedidos encontrados`}
             </h2>
           </div>
 
@@ -37,7 +80,11 @@ export default async function PedidosPage() {
           </Link>
         </div>
 
-        {orders.length === 0 ? (
+        {loading ? (
+          <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm md:p-10">
+            <p className="text-slate-600">Buscando pedidos...</p>
+          </div>
+        ) : orders.length === 0 ? (
           <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm md:p-10">
             <p className="text-slate-600">
               Você ainda não tem pedidos cadastrados.
@@ -48,6 +95,29 @@ export default async function PedidosPage() {
             {orders.map((order) => (
               <div key={order.id} className="space-y-3">
                 <OrderCard order={order} />
+
+                <div className="flex flex-wrap justify-end gap-2">
+                  <button
+                    onClick={() => updateOrderStatus(order.id, "ACCEPTED")}
+                    className="rounded-2xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-900"
+                  >
+                    Confirmar
+                  </button>
+
+                  <button
+                    onClick={() => updateOrderStatus(order.id, "COMPLETED")}
+                    className="rounded-2xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-white"
+                  >
+                    Concluir
+                  </button>
+
+                  <button
+                    onClick={() => updateOrderStatus(order.id, "CANCELLED")}
+                    className="rounded-2xl bg-rose-500 px-4 py-2 text-sm font-semibold text-white"
+                  >
+                    Cancelar
+                  </button>
+                </div>
 
                 {order.status === "Concluído" ? (
                   <div className="flex justify-end">
