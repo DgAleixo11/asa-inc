@@ -4,11 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
     "seed": "tsx prisma/seed.ts",
-    "export:web": "next build"
+    "export:web": "next build",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@capacitor/android": "^8.3.1",
