@@ -1,17 +1,12 @@
 import Link from "next/link";
-import { appConfig } from "@/config/app";
+import BrandLogo from "@/components/ui/BrandLogo";
 import { desktopNavItems } from "@/config/navigation";
 
 export default function DesktopNavbar() {
   return (
     <header className="hidden border-b border-slate-200 bg-white/80 backdrop-blur md:block">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-8 py-4">
-        <div>
-          <Link href="/" className="text-xl font-bold text-slate-900">
-            {appConfig.name}
-          </Link>
-          <p className="text-xs text-slate-500">{appConfig.slogan}</p>
-        </div>
+        <BrandLogo />
 
         <nav className="flex items-center gap-8">
           {desktopNavItems.map((item) => (
