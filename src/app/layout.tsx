@@ -4,13 +4,17 @@ import AuthProvider from "@/components/providers/AuthProvider";
 import PwaProvider from "@/components/providers/PwaProvider";
 
 export const metadata: Metadata = {
-  title: "ASA Inc.",
+  title: {
+    default: "ASA Inc.",
+    template: "%s | ASA Inc.",
+  },
   description: "Plataforma de conexão entre alunos para suporte acadêmico",
   manifest: "/manifest.webmanifest",
   applicationName: "ASA Inc.",
+  keywords: ["ASA Inc.", "mentoria", "alunos", "estudo", "aulas", "reforço"],
   appleWebApp: {
     capable: true,
-    statusBarStyle: "default",
+    statusBarStyle: "black-translucent",
     title: "ASA Inc.",
   },
   icons: {
@@ -19,6 +23,7 @@ export const metadata: Metadata = {
       { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
     ],
     apple: [{ url: "/icons/icon-192.png" }],
+    shortcut: [{ url: "/icons/icon-192.png" }],
   },
 };
 
@@ -27,6 +32,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -36,7 +42,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
-      <body>
+      <body className="bg-slate-50 text-slate-900 antialiased">
         <AuthProvider>
           <PwaProvider />
           {children}
