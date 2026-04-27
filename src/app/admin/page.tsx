@@ -29,15 +29,22 @@ export default function AdminPage() {
   const [mentors, setMentors] = useState<AdminMentor[]>([]);
   const [orders, setOrders] = useState<AdminOrder[]>([]);
   const [loading, setLoading] = useState(true);
+  const [unauthorized, setUnauthorized] = useState(false);
 
   async function loadData() {
     setLoading(true);
+    setUnauthorized(false);
 
     try {
       const [mentorsRes, ordersRes] = await Promise.all([
         fetch("/api/admin/mentors"),
         fetch("/api/admin/orders"),
       ]);
+
+      if (mentorsRes.status === 401 || ordersRes.status === 401) {
+        setUnauthorized(true);
+        return;
+      }
 
       if (mentorsRes.ok) {
         const mentorsData = await mentorsRes.json();
@@ -63,9 +70,40 @@ export default function AdminPage() {
     }
   }
 
+  async function updateOrderStatus(orderId: string, status: string) {
+    const res = await fetch(`/api/admin/orders/${orderId}/status`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ status }),
+    });
+
+    if (res.ok) {
+      await loadData();
+    }
+  }
+
   useEffect(() => {
     loadData();
   }, []);
+
+  if (unauthorized) {
+    return (
+      <ResponsiveShell mobileActive="profile">
+        <section className="px-5 py-8 md:px-8 md:py-10">
+          <div className="mx-auto max-w-4xl rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+            <h1 className="text-2xl font-bold text-slate-900">
+              Acesso negado
+            </h1>
+            <p className="mt-2 text-slate-600">
+              Seu usuário não tem permissão para acessar o painel admin.
+            </p>
+          </div>
+        </section>
+      </ResponsiveShell>
+    );
+  }
 
   return (
     <ResponsiveShell mobileActive="profile">
@@ -187,12 +225,34 @@ export default function AdminPage() {
                       Mentor: {order.mentorName}
                     </p>
                     <p className="text-sm text-slate-600">
-                      Data:{" "}
-                      {new Date(order.scheduledAt).toLocaleString("pt-BR")}
+                      Data: {new Date(order.scheduledAt).toLocaleString("pt-BR")}
                     </p>
                     <span className="mt-3 inline-block rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
                       {order.status}
                     </span>
+
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      <button
+                        onClick={() => updateOrderStatus(order.id, "ACCEPTED")}
+                        className="rounded-xl border border-slate-300 px-3 py-2 text-xs font-semibold text-slate-900"
+                      >
+                        Confirmar
+                      </button>
+
+                      <button
+                        onClick={() => updateOrderStatus(order.id, "COMPLETED")}
+                        className="rounded-xl bg-emerald-500 px-3 py-2 text-xs font-semibold text-white"
+                      >
+                        Concluir
+                      </button>
+
+                      <button
+                        onClick={() => updateOrderStatus(order.id, "CANCELLED")}
+                        className="rounded-xl bg-rose-500 px-3 py-2 text-xs font-semibold text-white"
+                      >
+                        Cancelar
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
