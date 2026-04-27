@@ -1,12 +1,6 @@
 import Link from "next/link";
-
-const navItems = [
-  { href: "/", label: "Início" },
-  { href: "/mentores", label: "Mentores" },
-  { href: "/pedidos", label: "Pedidos" },
-  { href: "/dashboard", label: "Dashboard" },
-  { href: "/perfil", label: "Perfil" },
-];
+import { appConfig } from "@/config/app";
+import { desktopNavItems } from "@/config/navigation";
 
 export default function DesktopNavbar() {
   return (
@@ -14,13 +8,13 @@ export default function DesktopNavbar() {
       <div className="mx-auto flex max-w-7xl items-center justify-between px-8 py-4">
         <div>
           <Link href="/" className="text-xl font-bold text-slate-900">
-            ASA Inc.
+            {appConfig.name}
           </Link>
-          <p className="text-xs text-slate-500">Aprender é evoluir.</p>
+          <p className="text-xs text-slate-500">{appConfig.slogan}</p>
         </div>
 
         <nav className="flex items-center gap-8">
-          {navItems.map((item) => (
+          {desktopNavItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}

@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { mobileNavItems } from "@/config/navigation";
+import type { MobileNavKey } from "@/types/ui";
 
 interface MobileBottomNavProps {
-  active?: "home" | "search" | "chat" | "profile";
+  active?: MobileNavKey;
 }
 
 export default function MobileBottomNav({
@@ -19,25 +21,12 @@ export default function MobileBottomNav({
   return (
     <div className="fixed bottom-0 left-1/2 z-50 w-full max-w-md -translate-x-1/2 border-t border-slate-200 bg-white/95 px-4 py-3 backdrop-blur md:hidden">
       <div className="flex items-center justify-between gap-2">
-        <Link href="/" className={cls("home")}>
-          <span className="text-lg">⌂</span>
-          <span>Início</span>
-        </Link>
-
-        <Link href="/mentores" className={cls("search")}>
-          <span className="text-lg">⌕</span>
-          <span>Buscar</span>
-        </Link>
-
-        <Link href="/chat/123" className={cls("chat")}>
-          <span className="text-lg">◔</span>
-          <span>Chat</span>
-        </Link>
-
-        <Link href="/perfil" className={cls("profile")}>
-          <span className="text-lg">◡</span>
-          <span>Perfil</span>
-        </Link>
+        {mobileNavItems.map((item) => (
+          <Link key={item.key} href={item.href} className={cls(item.key)}>
+            <span className="text-lg">{item.icon}</span>
+            <span>{item.label}</span>
+          </Link>
+        ))}
       </div>
     </div>
   );

@@ -1,9 +1,10 @@
 import DesktopNavbar from "@/components/navigation/DesktopNavbar";
 import MobileBottomNav from "@/components/navigation/MobileBottomNav";
+import type { MobileNavKey } from "@/types/ui";
 
 interface ResponsiveShellProps {
   children: React.ReactNode;
-  mobileActive?: "home" | "search" | "chat" | "profile";
+  mobileActive?: MobileNavKey;
 }
 
 export default function ResponsiveShell({

@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { mapOrderStatus } from "@/lib/mappers/order-status";
 
 export async function getDashboardSummary() {
   const session = await getServerSession(authOptions);
@@ -39,23 +40,7 @@ export async function getDashboardSummary() {
       mentorName: order.mentor.name,
       subject: order.subject.name,
       date: new Date(order.scheduledAt).toLocaleString("pt-BR"),
-      status:
-        order.status === "PENDING"
-          ? "Pendente"
-          : order.status === "ACCEPTED"
-          ? "Confirmado"
-          : order.status === "COMPLETED"
-          ? "Concluído"
-          : order.status === "CANCELLED"
-          ? "Cancelado"
-          : "Agendado",
-    })) as {
-      id: string;
-      title: string;
-      mentorName: string;
-      subject: string;
-      date: string;
-      status: "Confirmado" | "Pendente" | "Agendado" | "Concluído" | "Cancelado";
-    }[],
+      status: mapOrderStatus(order.status),
+    })),
   };
 }
