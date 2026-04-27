@@ -7,7 +7,7 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
-    "seed": "tsx prisma/seed.ts",
+    "seed": "tsx --tsconfig ./tsconfig.seed.json prisma/seed.ts",
     "export:web": "next build",
     "postinstall": "prisma generate"
   },
