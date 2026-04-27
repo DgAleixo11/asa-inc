@@ -6,9 +6,8 @@
     "dev": "next dev",
     "build": "prisma generate && next build",
     "start": "next start",
-    "lint": "eslint",
+    "lint": "next lint",
     "seed": "node prisma/seed.cjs",
-    "export:web": "next build",
     "postinstall": "prisma generate"
   },
   "dependencies": {
