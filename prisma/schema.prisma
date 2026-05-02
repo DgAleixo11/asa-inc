@@ -8,23 +8,27 @@ datasource db {
 }
 
 model User {
-  id            String   @id @default(cuid())
-  name          String
-  email         String   @unique
-  passwordHash  String
-  role          Role     @default(STUDENT)
-  institution   String?
-  course        String?
-  period        String?
-  isActive      Boolean  @default(true)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id                 String   @id @default(cuid())
+  name               String
+  email              String   @unique
+  passwordHash       String
+  role               Role     @default(STUDENT)
+  institution        String?
+  course             String?
+  period             String?
+  cpf                String?
+  phone              String?
+  pixKey             String?
+  mercadoPagoUserId  String?
+  isActive           Boolean  @default(true)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 
-  mentorProfile MentorProfile?
-  studentOrders Order[]  @relation("StudentOrders")
-  mentorOrders  Order[]  @relation("MentorOrders")
-  messages      Message[]
-  reviewsGiven  Review[] @relation("ReviewsGiven")
+  mentorProfile      MentorProfile?
+  studentOrders      Order[]   @relation("StudentOrders")
+  mentorOrders       Order[]   @relation("MentorOrders")
+  messages           Message[]
+  reviewsGiven       Review[]  @relation("ReviewsGiven")
 }
 
 model MentorProfile {
@@ -37,15 +41,15 @@ model MentorProfile {
   totalReviews  Int     @default(0)
   approved      Boolean @default(true)
 
-  user     User            @relation(fields: [userId], references: [id])
-  subjects MentorSubject[]
+  user          User            @relation(fields: [userId], references: [id])
+  subjects      MentorSubject[]
 }
 
 model Subject {
-  id      String          @id @default(cuid())
-  name    String          @unique
-  mentors MentorSubject[]
-  orders  Order[]
+  id       String          @id @default(cuid())
+  name     String          @unique
+  mentors  MentorSubject[]
+  orders   Order[]
 }
 
 model MentorSubject {
@@ -53,14 +57,14 @@ model MentorSubject {
   mentorId  String
   subjectId String
 
-  mentor  MentorProfile @relation(fields: [mentorId], references: [id])
-  subject Subject       @relation(fields: [subjectId], references: [id])
+  mentor    MentorProfile @relation(fields: [mentorId], references: [id])
+  subject   Subject       @relation(fields: [subjectId], references: [id])
 
   @@unique([mentorId, subjectId])
 }
 
 model Order {
-  id              String      @id @default(cuid())
+  id              String         @id @default(cuid())
   studentId       String
   mentorId        String
   subjectId       String
@@ -68,14 +72,22 @@ model Order {
   scheduledAt     DateTime
   durationMinutes Int
   totalPrice      Float
-  status          OrderStatus @default(PENDING)
-  createdAt       DateTime    @default(now())
+  valueTotal      Float?
+  asaCommission   Float?
+  mentorValue     Float?
+  paymentStatus   PaymentStatus  @default(PENDING)
+  paymentMethod   PaymentMethod?
+  paidAt          DateTime?
+  mercadoPagoRef  String?
+  status          OrderStatus    @default(PENDING)
+  createdAt       DateTime       @default(now())
 
-  student  User      @relation("StudentOrders", fields: [studentId], references: [id])
-  mentor   User      @relation("MentorOrders", fields: [mentorId], references: [id])
-  subject  Subject   @relation(fields: [subjectId], references: [id])
-  messages Message[]
-  reviews  Review[]
+  student         User                 @relation("StudentOrders", fields: [studentId], references: [id])
+  mentor          User                 @relation("MentorOrders", fields: [mentorId], references: [id])
+  subject         Subject              @relation(fields: [subjectId], references: [id])
+  messages        Message[]
+  reviews         Review[]
+  payments        PaymentTransaction[]
 }
 
 model Message {
@@ -85,8 +97,8 @@ model Message {
   content   String
   createdAt DateTime @default(now())
 
-  order  Order @relation(fields: [orderId], references: [id])
-  sender User  @relation(fields: [senderId], references: [id])
+  order     Order @relation(fields: [orderId], references: [id])
+  sender    User  @relation(fields: [senderId], references: [id])
 }
 
 model Review {
@@ -98,8 +110,26 @@ model Review {
   comment   String?
   createdAt DateTime @default(now())
 
-  order   Order @relation(fields: [orderId], references: [id])
-  student User  @relation("ReviewsGiven", fields: [studentId], references: [id])
+  order     Order @relation(fields: [orderId], references: [id])
+  student   User  @relation("ReviewsGiven", fields: [studentId], references: [id])
+}
+
+model PaymentTransaction {
+  id                   String        @id @default(cuid())
+  orderId              String
+  mercadoPagoPaymentId String?       @unique
+  externalReference    String        @unique
+  amount               Float
+  method               PaymentMethod
+  status               PaymentStatus @default(PENDING)
+  qrCode               String?
+  qrCodeBase64         String?
+  rawPayload           Json?
+  receivedAt           DateTime?
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+
+  order                Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
 }
 
 enum Role {
@@ -120,4 +150,16 @@ enum OrderStatus {
   REJECTED
   COMPLETED
   CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  REFUNDED
+}
+
+enum PaymentMethod {
+  PIX
+  CARD
 }
