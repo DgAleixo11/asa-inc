@@ -1,8 +1,40 @@
 # ASA Inc.
 
-Plataforma acadêmica para conectar alunos que precisam de ajuda com alunos que podem ensinar.
+Plataforma educacional para conectar quem quer ensinar com quem quer aprender.
 
-A proposta do projeto é permitir que estudantes encontrem mentores para matérias específicas, criem pedidos de atendimento, conversem por chat, avaliem a experiência e acompanhem tudo em uma dashboard.
+A ASA Inc. está sendo construída como um marketplace de educação, onde alunos, mentores e professores podem se conectar para aulas, reforço, preparação para provas, vestibulares e outras jornadas de aprendizagem.
+
+---
+
+## Proposta
+
+A ideia da ASA é ser uma plataforma simples, acessível e escalável para:
+
+- encontrar mentores por matéria
+- solicitar aulas e atendimentos
+- conversar por chat
+- avaliar a experiência
+- acompanhar tudo por dashboard
+- monetizar por comissão sobre aulas realizadas
+
+---
+
+## Posicionamento atual
+
+A ASA não fica mais restrita apenas a “alunos ajudando alunos”.
+
+O foco agora é abrir espaço para diferentes perfis de ensino e aprendizagem, incluindo:
+
+- alunos
+- mentores
+- professores
+- reforço acadêmico
+- preparação para vestibular
+- nichos de alta demanda, como engenharias, medicina, veterinária, áreas militares e concursos
+
+Tagline atual:
+
+**Ensine. Aprenda. Conecte.**
 
 ---
 
@@ -15,6 +47,8 @@ A proposta do projeto é permitir que estudantes encontrem mentores para matéri
 - PostgreSQL (Neon)
 - NextAuth
 - Zod
+- Mercado Pago
+- Capacitor
 
 ---
 
@@ -48,8 +82,21 @@ A proposta do projeto é permitir que estudantes encontrem mentores para matéri
 - Métricas principais
 
 ### Avaliações
-- Rota criada para enviar avaliação
+- Envio de avaliação
 - Atualização de média e total de avaliações do mentor
+
+### Admin
+- Visualização de usuários
+- Visualização de mentores
+- Aprovação de mentor
+- Mudança de status de pedidos
+- Filtros administrativos
+
+### Pagamentos
+- Estrutura inicial para Mercado Pago
+- Base para Pix
+- Base de webhook
+- Base de transações no banco
 
 ### Interface
 - Layout desktop
@@ -58,36 +105,13 @@ A proposta do projeto é permitir que estudantes encontrem mentores para matéri
 - Bottom navigation mobile
 - Home responsiva
 - Páginas principais padronizadas
+- PWA publicado
+- Base Android com Capacitor
 
 ---
 
-## Estrutura principal do projeto
+## Como rodar localmente
 
-```bash id="13003"
-src/
-  app/
-    api/
-    avaliacoes/
-    cadastro/
-    chat/
-    dashboard/
-    login/
-    mentores/
-    pedidos/
-    perfil/
-  components/
-    cards/
-    layout/
-    navigation/
-    sections/
-    ui/
-    providers/
-  config/
-  lib/
-    data/
-    mappers/
-  types/
-
-prisma/
-  schema.prisma
-  seed.ts
+### 1. Instalar dependências
+```bash
+npm install
