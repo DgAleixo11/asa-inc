@@ -35,26 +35,51 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[#020b2d] px-4">
-      <div className="w-full max-w-md rounded-3xl border border-slate-800 bg-[#0b1738] p-8 shadow-2xl">
-        <h1 className="text-center text-4xl font-bold text-white">Entrar</h1>
-        <p className="mt-3 text-center text-sm text-slate-200">
+    <main
+      className="flex min-h-screen items-center justify-center px-4"
+      style={{ backgroundColor: "#020b2d" }}
+    >
+      <div
+        className="w-full max-w-md rounded-[28px] p-8 shadow-2xl"
+        style={{
+          backgroundColor: "#0b1738",
+          border: "1px solid #1e335f",
+          boxShadow: "0 25px 60px rgba(0,0,0,0.45)",
+        }}
+      >
+        <h1
+          className="text-center text-4xl font-bold"
+          style={{ color: "#ffffff" }}
+        >
+          Entrar
+        </h1>
+
+        <p
+          className="mt-3 text-center text-sm"
+          style={{ color: "#dbe7ff" }}
+        >
           Acesse sua conta da ASA Inc.
         </p>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-6">
           <div>
-            <label className="mb-2 block text-sm font-semibold text-white">
+            <label
+              className="mb-2 block text-sm font-semibold"
+              style={{ color: "#ffffff" }}
+            >
               E-mail
             </label>
+
             <input
               type="email"
               name="email"
               placeholder="Digite seu e-mail"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 outline-none"
+              className="w-full rounded-2xl px-4 py-3 outline-none"
               style={{
+                backgroundColor: "#ffffff",
+                border: "1px solid #cbd5e1",
                 color: "#0f172a",
                 WebkitTextFillColor: "#0f172a",
                 caretColor: "#0f172a",
@@ -63,17 +88,23 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-semibold text-white">
+            <label
+              className="mb-2 block text-sm font-semibold"
+              style={{ color: "#ffffff" }}
+            >
               Senha
             </label>
+
             <input
               type="password"
               name="password"
               placeholder="Digite sua senha"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 outline-none"
+              className="w-full rounded-2xl px-4 py-3 outline-none"
               style={{
+                backgroundColor: "#ffffff",
+                border: "1px solid #cbd5e1",
                 color: "#0f172a",
                 WebkitTextFillColor: "#0f172a",
                 caretColor: "#0f172a",
@@ -82,21 +113,27 @@ export default function LoginPage() {
           </div>
 
           {erro ? (
-            <p className="text-sm font-medium text-red-400">{erro}</p>
+            <p className="text-sm font-medium" style={{ color: "#f87171" }}>
+              {erro}
+            </p>
           ) : null}
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-2xl bg-blue-600 px-4 py-3 text-base font-semibold text-white transition hover:bg-blue-500 disabled:opacity-70"
+            className="w-full rounded-2xl px-4 py-3 text-base font-semibold transition disabled:opacity-70"
+            style={{
+              backgroundColor: "#2563eb",
+              color: "#ffffff",
+            }}
           >
             {loading ? "Entrando..." : "Entrar"}
           </button>
         </form>
 
-        <p className="mt-8 text-center text-sm text-white">
+        <p className="mt-8 text-center text-sm" style={{ color: "#ffffff" }}>
           Ainda não tem conta?{" "}
-          <Link href="/cadastro" className="font-semibold text-blue-400">
+          <Link href="/register" style={{ color: "#60a5fa", fontWeight: 600 }}>
             Criar conta
           </Link>
         </p>

@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-export default function CadastroPage() {
+export default function RegisterPage() {
   const router = useRouter();
 
   const [form, setForm] = useState({
@@ -44,6 +44,7 @@ export default function CadastroPage() {
       }
 
       setSucesso("Conta criada com sucesso!");
+
       setTimeout(() => {
         router.push("/login");
       }, 1200);
@@ -55,24 +56,46 @@ export default function CadastroPage() {
   }
 
   const inputStyle: React.CSSProperties = {
+    backgroundColor: "#ffffff",
+    border: "1px solid #cbd5e1",
     color: "#0f172a",
     WebkitTextFillColor: "#0f172a",
     caretColor: "#0f172a",
   };
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[#020b2d] px-4 py-8">
-      <div className="w-full max-w-2xl rounded-3xl border border-slate-800 bg-[#0b1738] p-8 shadow-2xl">
-        <h1 className="text-center text-4xl font-bold text-white">
+    <main
+      className="flex min-h-screen items-center justify-center px-4 py-8"
+      style={{ backgroundColor: "#020b2d" }}
+    >
+      <div
+        className="w-full max-w-2xl rounded-[28px] p-8 shadow-2xl"
+        style={{
+          backgroundColor: "#0b1738",
+          border: "1px solid #1e335f",
+          boxShadow: "0 25px 60px rgba(0,0,0,0.45)",
+        }}
+      >
+        <h1
+          className="text-center text-4xl font-bold"
+          style={{ color: "#ffffff" }}
+        >
           Criar conta
         </h1>
-        <p className="mt-3 text-center text-sm text-slate-200">
+
+        <p
+          className="mt-3 text-center text-sm"
+          style={{ color: "#dbe7ff" }}
+        >
           Preencha seus dados para começar.
         </p>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-5">
           <div>
-            <label className="mb-2 block text-sm font-semibold text-white">
+            <label
+              className="mb-2 block text-sm font-semibold"
+              style={{ color: "#ffffff" }}
+            >
               Nome
             </label>
             <input
@@ -80,13 +103,16 @@ export default function CadastroPage() {
               placeholder="Digite seu nome"
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 outline-none"
+              className="w-full rounded-2xl px-4 py-3 outline-none"
               style={inputStyle}
             />
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-semibold text-white">
+            <label
+              className="mb-2 block text-sm font-semibold"
+              style={{ color: "#ffffff" }}
+            >
               E-mail
             </label>
             <input
@@ -94,13 +120,16 @@ export default function CadastroPage() {
               placeholder="Digite seu e-mail"
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
-              className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 outline-none"
+              className="w-full rounded-2xl px-4 py-3 outline-none"
               style={inputStyle}
             />
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-semibold text-white">
+            <label
+              className="mb-2 block text-sm font-semibold"
+              style={{ color: "#ffffff" }}
+            >
               Senha
             </label>
             <input
@@ -108,13 +137,16 @@ export default function CadastroPage() {
               placeholder="Digite sua senha"
               value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
-              className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 outline-none"
+              className="w-full rounded-2xl px-4 py-3 outline-none"
               style={inputStyle}
             />
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-semibold text-white">
+            <label
+              className="mb-2 block text-sm font-semibold"
+              style={{ color: "#ffffff" }}
+            >
               Instituição
             </label>
             <input
@@ -124,13 +156,16 @@ export default function CadastroPage() {
               onChange={(e) =>
                 setForm({ ...form, institution: e.target.value })
               }
-              className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 outline-none"
+              className="w-full rounded-2xl px-4 py-3 outline-none"
               style={inputStyle}
             />
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-semibold text-white">
+            <label
+              className="mb-2 block text-sm font-semibold"
+              style={{ color: "#ffffff" }}
+            >
               Curso
             </label>
             <input
@@ -138,13 +173,16 @@ export default function CadastroPage() {
               placeholder="Digite seu curso"
               value={form.course}
               onChange={(e) => setForm({ ...form, course: e.target.value })}
-              className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 outline-none"
+              className="w-full rounded-2xl px-4 py-3 outline-none"
               style={inputStyle}
             />
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-semibold text-white">
+            <label
+              className="mb-2 block text-sm font-semibold"
+              style={{ color: "#ffffff" }}
+            >
               Período
             </label>
             <input
@@ -152,28 +190,39 @@ export default function CadastroPage() {
               placeholder="Digite seu período"
               value={form.period}
               onChange={(e) => setForm({ ...form, period: e.target.value })}
-              className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 outline-none"
+              className="w-full rounded-2xl px-4 py-3 outline-none"
               style={inputStyle}
             />
           </div>
 
-          {erro ? <p className="text-sm font-medium text-red-400">{erro}</p> : null}
+          {erro ? (
+            <p className="text-sm font-medium" style={{ color: "#f87171" }}>
+              {erro}
+            </p>
+          ) : null}
+
           {sucesso ? (
-            <p className="text-sm font-medium text-emerald-400">{sucesso}</p>
+            <p className="text-sm font-medium" style={{ color: "#34d399" }}>
+              {sucesso}
+            </p>
           ) : null}
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-2xl bg-blue-600 px-4 py-3 text-base font-semibold text-white transition hover:bg-blue-500 disabled:opacity-70"
+            className="w-full rounded-2xl px-4 py-3 text-base font-semibold transition disabled:opacity-70"
+            style={{
+              backgroundColor: "#2563eb",
+              color: "#ffffff",
+            }}
           >
             {loading ? "Criando conta..." : "Criar conta"}
           </button>
         </form>
 
-        <p className="mt-8 text-center text-sm text-white">
+        <p className="mt-8 text-center text-sm" style={{ color: "#ffffff" }}>
           Já tem conta?{" "}
-          <Link href="/login" className="font-semibold text-blue-400">
+          <Link href="/login" style={{ color: "#60a5fa", fontWeight: 600 }}>
             Entrar
           </Link>
         </p>
