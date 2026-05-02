@@ -1,26 +1,23 @@
 import { MercadoPagoConfig, Payment } from "mercadopago";
 
-const accessToken = process.env.MP_ACCESS_TOKEN;
+export function getMercadoPagoAccessToken() {
+  const token =
+    process.env.MERCADO_PAGO_ACCESS_TOKEN ||
+    process.env.MP_ACCESS_TOKEN;
 
-if (!accessToken) {
-  throw new Error("MP_ACCESS_TOKEN não está definida.");
+  if (!token) {
+    throw new Error(
+      "Token do Mercado Pago não configurado. Defina MERCADO_PAGO_ACCESS_TOKEN ou MP_ACCESS_TOKEN nas variáveis de ambiente."
+    );
+  }
+
+  return token;
 }
 
-export const mercadoPagoClient = new MercadoPagoConfig({
-  accessToken,
-  options: { timeout: 5000 },
-});
+export function getMercadoPagoPaymentClient() {
+  const client = new MercadoPagoConfig({
+    accessToken: getMercadoPagoAccessToken(),
+  });
 
-export const mercadoPagoPayment = new Payment(mercadoPagoClient);
-
-export const ASA_COMMISSION_RATE = Number(
-  process.env.ASA_COMMISSION_RATE ?? "0.15"
-);
-
-export function getAppUrl() {
-  return (
-    process.env.NEXT_PUBLIC_APP_URL ||
-    process.env.NEXTAUTH_URL ||
-    "http://localhost:3000"
-  );
+  return new Payment(client);
 }

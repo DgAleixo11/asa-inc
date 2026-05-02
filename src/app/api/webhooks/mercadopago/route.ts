@@ -1,87 +1,203 @@
-import { NextResponse } from "next/server";
-import { mercadoPagoPayment } from "@/lib/mercadopago";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getMercadoPagoPaymentClient } from "@/lib/mercadopago";
 
-export async function POST(req: Request) {
+export const runtime = "nodejs";
+
+function mapMercadoPagoStatus(status: string | undefined) {
+  switch (status) {
+    case "approved":
+      return "APPROVED";
+    case "rejected":
+    case "cancelled":
+      return "REJECTED";
+    case "refunded":
+      return "REFUNDED";
+    default:
+      return "PENDING";
+  }
+}
+
+function extractPaymentId(body: any, req: NextRequest) {
+  const searchParams = req.nextUrl.searchParams;
+
+  const fromBodyData = body?.data?.id;
+  const fromBodyId = body?.id;
+  const fromQueryId = searchParams.get("id");
+
+  if (fromBodyData) return String(fromBodyData);
+  if (fromBodyId) return String(fromBodyId);
+  if (fromQueryId) return String(fromQueryId);
+
+  if (typeof body?.resource === "string") {
+    const parts = body.resource.split("/");
+    return parts[parts.length - 1];
+  }
+
+  return null;
+}
+
+export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const type = body?.type;
-    const dataId = body?.data?.id;
 
-    if (type !== "payment" || !dataId) {
-      return NextResponse.json({ ok: true });
+    const eventType =
+      body?.type ||
+      body?.topic ||
+      req.nextUrl.searchParams.get("type") ||
+      req.nextUrl.searchParams.get("topic");
+
+    if (eventType && eventType !== "payment") {
+      return NextResponse.json({
+        received: true,
+        ignored: true,
+        reason: "Evento ignorado porque não é payment.",
+      });
     }
 
-    const payment = await mercadoPagoPayment.get({ id: String(dataId) });
+    const paymentId = extractPaymentId(body, req);
 
-    const paymentId = payment.id ? String(payment.id) : null;
-    const externalReference = payment.external_reference ?? null;
+    if (!paymentId) {
+      return NextResponse.json(
+        {
+          received: true,
+          ignored: true,
+          reason: "ID do pagamento não encontrado no webhook.",
+        },
+        { status: 200 }
+      );
+    }
 
-    if (!paymentId && !externalReference) {
-      return NextResponse.json({ ok: true });
+    const mercadoPagoPayment = getMercadoPagoPaymentClient();
+
+    const mercadoPagoPaymentData = await mercadoPagoPayment.get({
+      id: paymentId as any,
+    });
+
+    const mpPayment = mercadoPagoPaymentData as any;
+
+    const mercadoPagoPaymentId = mpPayment?.id ? String(mpPayment.id) : null;
+
+    const externalReference = mpPayment?.external_reference
+      ? String(mpPayment.external_reference)
+      : null;
+
+    const mappedStatus = mapMercadoPagoStatus(mpPayment?.status);
+
+    if (!mercadoPagoPaymentId && !externalReference) {
+      return NextResponse.json({
+        received: true,
+        ignored: true,
+        reason: "Pagamento sem ID e sem external_reference.",
+      });
     }
 
     const transaction = await prisma.paymentTransaction.findFirst({
       where: {
         OR: [
-          ...(paymentId ? [{ mercadoPagoPaymentId: paymentId }] : []),
-          ...(externalReference ? [{ externalReference }] : []),
-        ],
+          mercadoPagoPaymentId
+            ? {
+                mercadoPagoPaymentId,
+              }
+            : undefined,
+          externalReference
+            ? {
+                externalReference,
+              }
+            : undefined,
+        ].filter(Boolean) as any,
+      },
+      include: {
+        order: true,
       },
     });
 
     if (!transaction) {
-      return NextResponse.json(
-        { error: "Transação não encontrada" },
-        { status: 404 }
-      );
-    }
-
-    if (transaction.status === "APPROVED") {
-      return NextResponse.json({ ok: true, message: "Já processado" });
-    }
-
-    if (payment.status === "approved") {
-      await prisma.paymentTransaction.update({
-        where: { id: transaction.id },
-        data: {
-          status: "APPROVED",
-          receivedAt: new Date(),
-          rawPayload: payment as unknown as object,
-          mercadoPagoPaymentId: paymentId,
-        },
+      console.warn("Transação não encontrada para o webhook:", {
+        mercadoPagoPaymentId,
+        externalReference,
       });
 
+      return NextResponse.json({
+        received: true,
+        ignored: true,
+        reason: "Transação ainda não existe no banco.",
+      });
+    }
+
+    await prisma.paymentTransaction.update({
+      where: {
+        id: transaction.id,
+      },
+      data: {
+        mercadoPagoPaymentId,
+        status: mappedStatus as any,
+        rawPayload: mpPayment,
+        receivedAt: new Date(),
+      },
+    });
+
+    if (mappedStatus === "APPROVED") {
       await prisma.order.update({
-        where: { id: transaction.orderId },
+        where: {
+          id: transaction.orderId,
+        },
         data: {
           paymentStatus: "APPROVED",
+          paymentMethod: "PIX",
           paidAt: new Date(),
         },
       });
     }
 
-    if (payment.status === "rejected") {
-      await prisma.paymentTransaction.update({
-        where: { id: transaction.id },
-        data: {
-          status: "REJECTED",
-          rawPayload: payment as unknown as object,
-          mercadoPagoPaymentId: paymentId,
-        },
-      });
-
+    if (mappedStatus === "REJECTED") {
       await prisma.order.update({
-        where: { id: transaction.orderId },
+        where: {
+          id: transaction.orderId,
+        },
         data: {
           paymentStatus: "REJECTED",
+          paymentMethod: "PIX",
         },
       });
     }
 
-    return NextResponse.json({ ok: true });
+    if (mappedStatus === "REFUNDED") {
+      await prisma.order.update({
+        where: {
+          id: transaction.orderId,
+        },
+        data: {
+          paymentStatus: "REFUNDED",
+          paymentMethod: "PIX",
+        },
+      });
+    }
+
+    return NextResponse.json({
+      received: true,
+      paymentId: mercadoPagoPaymentId,
+      externalReference,
+      status: mappedStatus,
+    });
   } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: "Erro no webhook" }, { status: 500 });
+    console.error("Erro no webhook do Mercado Pago:", error);
+
+    return NextResponse.json(
+      {
+        received: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : "Erro interno ao processar webhook.",
+      },
+      { status: 500 }
+    );
   }
+}
+
+export async function GET() {
+  return NextResponse.json({
+    message: "Webhook Mercado Pago ativo.",
+  });
 }

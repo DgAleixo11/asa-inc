@@ -1,27 +1,49 @@
-import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { NextRequest, NextResponse } from "next/server";
+import crypto from "crypto";
+import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import {
-  mercadoPagoPayment,
-  ASA_COMMISSION_RATE,
-  getAppUrl,
-} from "@/lib/mercadopago";
+import { getMercadoPagoPaymentClient } from "@/lib/mercadopago";
 
-export async function POST(req: Request) {
+export const runtime = "nodejs";
+
+function roundMoney(value: number) {
+  return Math.round(value * 100) / 100;
+}
+
+function getAppUrl() {
+  return (
+    process.env.NEXT_PUBLIC_APP_URL ||
+    process.env.NEXTAUTH_URL ||
+    "http://localhost:3000"
+  );
+}
+
+export async function POST(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await auth();
 
-    if (!session?.user?.id || !session.user.email) {
-      return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
+    const sessionUser = session?.user as
+      | {
+          id?: string;
+          role?: string;
+          email?: string | null;
+          name?: string | null;
+        }
+      | undefined;
+
+    if (!sessionUser?.id) {
+      return NextResponse.json(
+        { error: "Você precisa estar logado para gerar o Pix." },
+        { status: 401 }
+      );
     }
 
     const body = await req.json();
-    const { orderId } = body as { orderId?: string };
+    const orderId = body?.orderId;
 
-    if (!orderId) {
+    if (!orderId || typeof orderId !== "string") {
       return NextResponse.json(
-        { error: "orderId é obrigatório" },
+        { error: "O campo orderId é obrigatório." },
         { status: 400 }
       );
     }
@@ -29,110 +51,180 @@ export async function POST(req: Request) {
     const order = await prisma.order.findUnique({
       where: { id: orderId },
       include: {
+        student: true,
         mentor: true,
         subject: true,
-        student: true,
-        payments: true,
+        payments: {
+          orderBy: {
+            createdAt: "desc",
+          },
+          take: 1,
+        },
       },
     });
 
     if (!order) {
       return NextResponse.json(
-        { error: "Pedido não encontrado" },
+        { error: "Pedido não encontrado." },
         { status: 404 }
       );
     }
 
-    if (order.studentId !== session.user.id) {
-      return NextResponse.json({ error: "Acesso negado" }, { status: 403 });
-    }
+    const isStudentOwner = order.studentId === sessionUser.id;
+    const isAdmin = sessionUser.role === "ADMIN";
 
-    const mentorProfile = await prisma.mentorProfile.findUnique({
-      where: { userId: order.mentorId },
-    });
-
-    if (!mentorProfile) {
+    if (!isStudentOwner && !isAdmin) {
       return NextResponse.json(
-        { error: "Perfil do mentor não encontrado" },
-        { status: 404 }
+        { error: "Você não tem permissão para gerar Pix para este pedido." },
+        { status: 403 }
       );
     }
 
-    const existingApprovedPayment = order.payments.find(
-      (payment) => payment.status === "APPROVED"
-    );
-
-    if (existingApprovedPayment) {
+    if (order.paymentStatus === "APPROVED") {
       return NextResponse.json(
-        { error: "Esse pedido já foi pago" },
+        { error: "Este pedido já está pago." },
         { status: 400 }
       );
     }
 
-    const valueTotal =
-      order.valueTotal ??
-      order.totalPrice ??
-      Number(mentorProfile.pricePerHour);
+    const lastPayment = order.payments[0];
 
-    const asaCommission = Number(
-      (Number(valueTotal) * ASA_COMMISSION_RATE).toFixed(2)
+    if (
+      lastPayment &&
+      lastPayment.status === "PENDING" &&
+      lastPayment.qrCode
+    ) {
+      return NextResponse.json({
+        message: "Já existe uma cobrança Pix pendente para este pedido.",
+        payment: {
+          id: lastPayment.id,
+          mercadoPagoPaymentId: lastPayment.mercadoPagoPaymentId,
+          externalReference: lastPayment.externalReference,
+          amount: lastPayment.amount,
+          status: lastPayment.status,
+          qrCode: lastPayment.qrCode,
+          qrCodeBase64: lastPayment.qrCodeBase64,
+        },
+      });
+    }
+
+    const mentorProfile = await prisma.mentorProfile.findUnique({
+      where: {
+        userId: order.mentorId,
+      },
+    });
+
+    if (!mentorProfile) {
+      return NextResponse.json(
+        {
+          error:
+            "Perfil do mentor não encontrado. Não foi possível calcular o valor da aula.",
+        },
+        { status: 404 }
+      );
+    }
+
+    const calculatedTotal = roundMoney(
+      mentorProfile.pricePerHour * (order.durationMinutes / 60)
     );
-    const mentorValue = Number((Number(valueTotal) - asaCommission).toFixed(2));
-    const externalReference = `order_${order.id}_${Date.now()}`;
 
-    const payment = await mercadoPagoPayment.create({
+    const valueTotal = roundMoney(order.totalPrice || calculatedTotal);
+    const asaCommission = roundMoney(valueTotal * 0.15);
+    const mentorValue = roundMoney(valueTotal - asaCommission);
+
+    const externalReference = order.mercadoPagoRef || `ASA-ORDER-${order.id}`;
+    const idempotencyKey = crypto.randomUUID();
+
+    const notificationUrl = `${getAppUrl()}/api/webhooks/mercadopago`;
+
+    const mercadoPagoPayment = getMercadoPagoPaymentClient();
+
+    const paymentResponse = await mercadoPagoPayment.create({
       body: {
-        transaction_amount: Number(valueTotal),
-        description: `Aula de ${order.subject.name} com ${order.mentor.name}`,
+        transaction_amount: valueTotal,
+        description: `ASA Inc. - ${order.subject.name}`,
         payment_method_id: "pix",
+        external_reference: externalReference,
+        notification_url: notificationUrl,
         payer: {
           email: order.student.email,
-          first_name: order.student.name.split(" ")[0],
+          first_name: order.student.name,
         },
-        external_reference: externalReference,
-        notification_url: `${getAppUrl()}/api/webhooks/mercadopago`,
+        metadata: {
+          orderId: order.id,
+          studentId: order.studentId,
+          mentorId: order.mentorId,
+          asaCommission,
+          mentorValue,
+        },
+      },
+      requestOptions: {
+        idempotencyKey,
+      },
+    });
+
+    const mpPayment = paymentResponse as any;
+
+    const qrCode =
+      mpPayment?.point_of_interaction?.transaction_data?.qr_code || null;
+
+    const qrCodeBase64 =
+      mpPayment?.point_of_interaction?.transaction_data?.qr_code_base64 || null;
+
+    const mercadoPagoPaymentId = mpPayment?.id ? String(mpPayment.id) : null;
+
+    const transaction = await prisma.paymentTransaction.create({
+      data: {
+        orderId: order.id,
+        mercadoPagoPaymentId,
+        externalReference,
+        amount: valueTotal,
+        method: "PIX",
+        status: "PENDING",
+        qrCode,
+        qrCodeBase64,
+        rawPayload: mpPayment,
       },
     });
 
     await prisma.order.update({
-      where: { id: order.id },
+      where: {
+        id: order.id,
+      },
       data: {
-        valueTotal: Number(valueTotal),
+        valueTotal,
         asaCommission,
         mentorValue,
-        paymentStatus: "PENDING",
         paymentMethod: "PIX",
+        paymentStatus: "PENDING",
         mercadoPagoRef: externalReference,
       },
     });
 
-    const qrData = payment.point_of_interaction?.transaction_data;
-
-    await prisma.paymentTransaction.create({
-      data: {
-        orderId: order.id,
-        mercadoPagoPaymentId: payment.id ? String(payment.id) : null,
+    return NextResponse.json({
+      message: "Cobrança Pix criada com sucesso.",
+      payment: {
+        id: transaction.id,
+        mercadoPagoPaymentId,
         externalReference,
-        amount: Number(valueTotal),
-        method: "PIX",
+        amount: valueTotal,
+        asaCommission,
+        mentorValue,
         status: "PENDING",
-        qrCode: qrData?.qr_code ?? null,
-        qrCodeBase64: qrData?.qr_code_base64 ?? null,
-        rawPayload: payment as unknown as object,
+        qrCode,
+        qrCodeBase64,
       },
     });
-
-    return NextResponse.json({
-      orderId: order.id,
-      amount: Number(valueTotal),
-      qrCode: qrData?.qr_code ?? null,
-      qrCodeBase64: qrData?.qr_code_base64 ?? null,
-      paymentId: payment.id ?? null,
-    });
   } catch (error) {
-    console.error(error);
+    console.error("Erro ao criar cobrança Pix:", error);
+
     return NextResponse.json(
-      { error: "Erro ao criar pagamento Pix" },
+      {
+        error:
+          error instanceof Error
+            ? error.message
+            : "Erro interno ao criar cobrança Pix.",
+      },
       { status: 500 }
     );
   }
