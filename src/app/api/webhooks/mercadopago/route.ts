@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getMercadoPagoPaymentClient } from "@/lib/mercadopago";
+import { createMercadoPagoPaymentClient } from "@/lib/mercadopago";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 function mapMercadoPagoStatus(status: string | undefined) {
   switch (status) {
@@ -68,7 +69,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const mercadoPagoPayment = getMercadoPagoPaymentClient();
+    const mercadoPagoPayment = createMercadoPagoPaymentClient();
 
     const mercadoPagoPaymentData = await mercadoPagoPayment.get({
       id: paymentId as any,

@@ -2,9 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { getMercadoPagoPaymentClient } from "@/lib/mercadopago";
+import { createMercadoPagoPaymentClient } from "@/lib/mercadopago";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 function roundMoney(value: number) {
   return Math.round(value * 100) / 100;
@@ -49,7 +50,9 @@ export async function POST(req: NextRequest) {
     }
 
     const order = await prisma.order.findUnique({
-      where: { id: orderId },
+      where: {
+        id: orderId,
+      },
       include: {
         student: true,
         mentor: true,
@@ -137,7 +140,7 @@ export async function POST(req: NextRequest) {
 
     const notificationUrl = `${getAppUrl()}/api/webhooks/mercadopago`;
 
-    const mercadoPagoPayment = getMercadoPagoPaymentClient();
+    const mercadoPagoPayment = createMercadoPagoPaymentClient();
 
     const paymentResponse = await mercadoPagoPayment.create({
       body: {
