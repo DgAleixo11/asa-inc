@@ -1,35 +1,36 @@
 "use client";
 
-import { FormEvent, useState } from "react";
-import { signIn } from "next-auth/react";
+import { useState } from "react";
 import Link from "next/link";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import ResponsiveShell from "@/components/layout/ResponsiveShell";
 
 export default function LoginPage() {
   const router = useRouter();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+  });
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-
-    setIsLoading(true);
-    setErrorMessage("");
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    setMessage("");
 
     const result = await signIn("credentials", {
-      email,
-      password,
+      email: form.email,
+      password: form.password,
       redirect: false,
     });
 
-    setIsLoading(false);
-
     if (result?.error) {
-      setErrorMessage("E-mail ou senha inválidos.");
+      setMessage("E-mail ou senha inválidos.");
+      setLoading(false);
       return;
     }
 
@@ -37,87 +38,96 @@ export default function LoginPage() {
     router.refresh();
   }
 
+  const inputClassName =
+    "w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder-slate-400 outline-none transition focus:border-sky-700";
+
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-10 text-white">
-      <div className="mx-auto flex min-h-[calc(100vh-80px)] w-full max-w-md items-center justify-center">
-        <section className="w-full rounded-2xl border border-slate-800 bg-slate-900 p-6 shadow-2xl">
-          <div className="mb-8 text-center">
-            <h1 className="text-3xl font-bold text-white">Entrar</h1>
+    <ResponsiveShell mobileActive="profile">
+      <section className="bg-gradient-to-br from-sky-950 via-sky-900 to-cyan-800 px-5 pb-10 pt-8 text-white md:px-8 md:pb-14 md:pt-12">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+            <div className="max-w-2xl">
+              <p className="text-sm font-medium tracking-wide text-cyan-200">
+                ASA Inc.
+              </p>
+              <h1 className="mt-3 text-4xl font-bold leading-tight md:text-5xl">
+                Entrar na plataforma
+              </h1>
+              <p className="mt-4 max-w-xl text-base leading-relaxed text-slate-200 md:text-lg">
+                Acesse sua conta para acompanhar pedidos, conversar com mentores
+                e continuar sua jornada de aprendizado.
+              </p>
 
-            <p className="mt-2 text-sm text-slate-300">
-              Acesse sua conta da ASA Inc.
-            </p>
-          </div>
+              <div className="mt-6 rounded-3xl border border-white/10 bg-white/10 p-5 backdrop-blur md:mt-8 md:p-6">
+                <p className="text-sm text-slate-200">
+                  Com sua conta você pode:
+                </p>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <label
-                htmlFor="email"
-                className="mb-2 block text-sm font-medium text-slate-200"
-              >
-                E-mail
-              </label>
-
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                placeholder="Digite seu e-mail"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                required
-                className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-950 placeholder:text-slate-400 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="password"
-                className="mb-2 block text-sm font-medium text-slate-200"
-              >
-                Senha
-              </label>
-
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                placeholder="Digite sua senha"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                required
-                className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-950 placeholder:text-slate-400 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            {errorMessage && (
-              <div className="rounded-xl border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">
-                {errorMessage}
+                <ul className="mt-4 space-y-3 text-sm text-slate-100">
+                  <li>• acompanhar suas aulas e pedidos</li>
+                  <li>• falar com mentores no chat</li>
+                  <li>• gerenciar seu perfil e avaliações</li>
+                </ul>
               </div>
-            )}
+            </div>
 
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full rounded-xl bg-blue-600 px-4 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-70"
-            >
-              {isLoading ? "Entrando..." : "Entrar"}
-            </button>
-          </form>
+            <div className="rounded-[2rem] border border-white/10 bg-white/10 p-3 backdrop-blur md:p-4">
+              <div className="rounded-[1.7rem] bg-white p-6 shadow-2xl md:p-8">
+                <h2 className="text-2xl font-bold text-slate-900">Entrar</h2>
+                <p className="mt-2 text-sm text-slate-600">
+                  Digite seus dados para acessar.
+                </p>
 
-          <div className="mt-6 text-center text-sm text-slate-300">
-            Ainda não tem conta?{" "}
-            <Link
-              href="/register"
-              className="font-semibold text-blue-400 hover:text-blue-300"
-            >
-              Criar conta
-            </Link>
+                <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+                  <input
+                    type="email"
+                    className={inputClassName}
+                    placeholder="E-mail"
+                    value={form.email}
+                    onChange={(e) =>
+                      setForm({ ...form, email: e.target.value })
+                    }
+                  />
+
+                  <input
+                    type="password"
+                    className={inputClassName}
+                    placeholder="Senha"
+                    value={form.password}
+                    onChange={(e) =>
+                      setForm({ ...form, password: e.target.value })
+                    }
+                  />
+
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full rounded-2xl bg-slate-900 px-4 py-3 font-semibold text-white transition hover:bg-slate-800 disabled:opacity-70"
+                  >
+                    {loading ? "Entrando..." : "Entrar"}
+                  </button>
+                </form>
+
+                {message ? (
+                  <p className="mt-4 rounded-2xl bg-slate-50 px-4 py-3 text-sm text-slate-700">
+                    {message}
+                  </p>
+                ) : null}
+
+                <div className="mt-6 text-center text-sm text-slate-600">
+                  Ainda não tem conta?{" "}
+                  <Link
+                    href="/cadastro"
+                    className="font-semibold text-sky-900 hover:text-sky-700"
+                  >
+                    Criar conta
+                  </Link>
+                </div>
+              </div>
+            </div>
           </div>
-        </section>
-      </div>
-    </main>
+        </div>
+      </section>
+    </ResponsiveShell>
   );
 }
