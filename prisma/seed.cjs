@@ -4,125 +4,203 @@ const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
 
-async function main() {
-  const hashed = await bcrypt.hash("123456", 10);
-
-  const calculo = await prisma.subject.upsert({
-    where: { name: "Cálculo I" },
+async function upsertSubject(name) {
+  return prisma.subject.upsert({
+    where: { name },
     update: {},
-    create: { name: "Cálculo I" },
+    create: { name },
   });
+}
 
-  const redacao = await prisma.subject.upsert({
-    where: { name: "Redação" },
-    update: {},
-    create: { name: "Redação" },
-  });
-
-  const python = await prisma.subject.upsert({
-    where: { name: "Python" },
-    update: {},
-    create: { name: "Python" },
-  });
-
-  const marina = await prisma.user.upsert({
-    where: { email: "marina@asa.com" },
+async function upsertMentor({
+  name,
+  email,
+  institution,
+  course,
+  period,
+  bio,
+  pricePerHour,
+  mode,
+  averageRating,
+  totalReviews,
+  subjects,
+  passwordHash,
+}) {
+  const user = await prisma.user.upsert({
+    where: { email },
     update: {},
     create: {
-      name: "Marina Costa",
-      email: "marina@asa.com",
-      passwordHash: hashed,
+      name,
+      email,
+      passwordHash,
       role: "MENTOR",
-      institution: "Universidade Exemplo",
-      course: "Engenharia Civil",
-      period: "7º período",
+      institution,
+      course,
+      period,
     },
   });
 
-  const pedro = await prisma.user.upsert({
-    where: { email: "pedro@asa.com" },
-    update: {},
-    create: {
-      name: "Pedro Alves",
-      email: "pedro@asa.com",
-      passwordHash: hashed,
-      role: "MENTOR",
-      institution: "Universidade Exemplo",
-      course: "Letras",
-      period: "5º período",
+  const profile = await prisma.mentorProfile.upsert({
+    where: { userId: user.id },
+    update: {
+      bio,
+      pricePerHour,
+      mode,
+      averageRating,
+      totalReviews,
+      approved: true,
     },
-  });
-
-  const juliana = await prisma.user.upsert({
-    where: { email: "juliana@asa.com" },
-    update: {},
     create: {
-      name: "Juliana Rocha",
-      email: "juliana@asa.com",
-      passwordHash: hashed,
-      role: "MENTOR",
-      institution: "Universidade Exemplo",
-      course: "Ciência da Computação",
-      period: "6º período",
-    },
-  });
-
-  const marinaProfile = await prisma.mentorProfile.upsert({
-    where: { userId: marina.id },
-    update: {},
-    create: {
-      userId: marina.id,
-      bio: "Ajudo alunos com cálculo, limites e derivadas.",
-      pricePerHour: 25,
-      mode: "ONLINE",
-      averageRating: 4.9,
-      totalReviews: 87,
+      userId: user.id,
+      bio,
+      pricePerHour,
+      mode,
+      averageRating,
+      totalReviews,
       approved: true,
     },
   });
 
-  const pedroProfile = await prisma.mentorProfile.upsert({
-    where: { userId: pedro.id },
-    update: {},
-    create: {
-      userId: pedro.id,
-      bio: "Ajudo com redação, estrutura argumentativa e repertório.",
-      pricePerHour: 18,
-      mode: "ONLINE",
-      averageRating: 5.0,
-      totalReviews: 142,
-      approved: true,
-    },
-  });
+  for (const subject of subjects) {
+    const subjectData = await upsertSubject(subject);
 
-  const julianaProfile = await prisma.mentorProfile.upsert({
-    where: { userId: juliana.id },
-    update: {},
-    create: {
-      userId: juliana.id,
-      bio: "Foco em lógica, Python e projetos práticos.",
-      pricePerHour: 30,
-      mode: "ONLINE",
-      averageRating: 4.8,
-      totalReviews: 56,
-      approved: true,
-    },
-  });
+    const exists = await prisma.mentorSubject.findFirst({
+      where: {
+        mentorId: profile.id,
+        subjectId: subjectData.id,
+      },
+    });
 
-  const mentorSubjects = [
-    { mentorId: marinaProfile.id, subjectId: calculo.id },
-    { mentorId: pedroProfile.id, subjectId: redacao.id },
-    { mentorId: julianaProfile.id, subjectId: python.id },
-  ];
-
-  for (const item of mentorSubjects) {
-    const exists = await prisma.mentorSubject.findFirst({ where: item });
     if (!exists) {
-      await prisma.mentorSubject.create({ data: item });
+      await prisma.mentorSubject.create({
+        data: {
+          mentorId: profile.id,
+          subjectId: subjectData.id,
+        },
+      });
     }
   }
 
-  console.log("Seed concluído.");
+  return profile;
+}
+
+async function main() {
+  const hashed = await bcrypt.hash("123456", 10);
+
+  const subjects = [
+    "Biologia",
+    "Química",
+    "Física",
+    "Matemática",
+    "Redação ENEM",
+    "Cálculo I",
+    "Python",
+    "Power BI",
+    "Preparatório Medicina",
+    "Preparatório Medicina Veterinária",
+    "Preparatório Engenharia",
+    "Preparatório ESA",
+    "Preparatório EsPCEx",
+    "Preparatório EEAR",
+    "Preparatório PMERJ",
+    "Preparatório Polícia Civil",
+  ];
+
+  for (const subject of subjects) {
+    await upsertSubject(subject);
+  }
+
+  await upsertMentor({
+    name: "Ana Beatriz",
+    email: "ana.medicina@asa.com",
+    institution: "Universidade Federal",
+    course: "Medicina",
+    period: "8º período",
+    bio: "Ajudo estudantes que sonham com Medicina a organizar rotina, revisar biologia, química e montar estratégia para vestibular e ENEM.",
+    pricePerHour: 35,
+    mode: "ONLINE",
+    averageRating: 4.9,
+    totalReviews: 128,
+    subjects: ["Preparatório Medicina", "Biologia", "Química", "Redação ENEM"],
+    passwordHash: hashed,
+  });
+
+  await upsertMentor({
+    name: "Lucas Ferreira",
+    email: "lucas.engenharia@asa.com",
+    institution: "Universidade Pública",
+    course: "Engenharia de Produção",
+    period: "7º período",
+    bio: "Dou apoio em cálculo, física, matemática e organização de estudos para quem quer entrar ou sobreviver bem na engenharia.",
+    pricePerHour: 30,
+    mode: "ONLINE",
+    averageRating: 4.8,
+    totalReviews: 96,
+    subjects: ["Preparatório Engenharia", "Cálculo I", "Física", "Matemática"],
+    passwordHash: hashed,
+  });
+
+  await upsertMentor({
+    name: "Camila Rocha",
+    email: "camila.redacao@asa.com",
+    institution: "Universidade Estadual",
+    course: "Letras",
+    period: "6º período",
+    bio: "Ajudo com redação ENEM, estrutura argumentativa, repertório sociocultural e correção detalhada para vestibulares.",
+    pricePerHour: 25,
+    mode: "ONLINE",
+    averageRating: 5.0,
+    totalReviews: 174,
+    subjects: ["Redação ENEM", "Preparatório Medicina", "Preparatório Polícia Civil"],
+    passwordHash: hashed,
+  });
+
+  await upsertMentor({
+    name: "Rafael Mendes",
+    email: "rafael.militar@asa.com",
+    institution: "Preparatório Militar",
+    course: "Matemática e Física",
+    period: "Mentor",
+    bio: "Foco em preparação para ESA, EsPCEx e EEAR, com matemática, física, simulados e plano de estudo semanal.",
+    pricePerHour: 28,
+    mode: "ONLINE",
+    averageRating: 4.7,
+    totalReviews: 83,
+    subjects: ["Preparatório ESA", "Preparatório EsPCEx", "Preparatório EEAR", "Matemática", "Física"],
+    passwordHash: hashed,
+  });
+
+  await upsertMentor({
+    name: "Bruno Almeida",
+    email: "bruno.policia@asa.com",
+    institution: "Preparatório para Concursos",
+    course: "Segurança Pública",
+    period: "Mentor",
+    bio: "Ajudo candidatos de concursos policiais com organização de estudos, português, redação e estratégia para PMERJ e Polícia Civil.",
+    pricePerHour: 27,
+    mode: "ONLINE",
+    averageRating: 4.9,
+    totalReviews: 111,
+    subjects: ["Preparatório PMERJ", "Preparatório Polícia Civil", "Redação ENEM", "Matemática"],
+    passwordHash: hashed,
+  });
+
+  await upsertMentor({
+    name: "Juliana Costa",
+    email: "juliana.tech@asa.com",
+    institution: "Universidade Exemplo",
+    course: "Ciência da Computação",
+    period: "6º período",
+    bio: "Ajudo estudantes com Python, lógica de programação, Power BI e projetos práticos para faculdade e portfólio.",
+    pricePerHour: 32,
+    mode: "ONLINE",
+    averageRating: 4.8,
+    totalReviews: 67,
+    subjects: ["Python", "Power BI", "Preparatório Engenharia"],
+    passwordHash: hashed,
+  });
+
+  console.log("Seed concluído com os novos nichos da ASA Inc.");
 }
 
 main()

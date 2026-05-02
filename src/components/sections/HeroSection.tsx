@@ -26,22 +26,24 @@ export default function HeroSection() {
 
         <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
           <div className="max-w-3xl">
-            <SectionBadge>Plataforma acadêmica</SectionBadge>
+            <SectionBadge>Plataforma acadêmica e preparatória</SectionBadge>
 
             <h1 className="mt-5 text-4xl font-bold leading-tight md:text-7xl">
-              Alunos ajudando <span className="text-teal-300">alunos</span>
+              Encontre quem já passou pelo caminho que você quer{" "}
+              <span className="text-teal-300">chegar</span>
             </h1>
 
             <p className="mt-5 max-w-2xl text-base leading-relaxed text-slate-200 md:text-lg">
-              Encontre alguém que domina a matéria que você precisa ou ensine o
-              que você sabe e transforme isso em renda extra dentro de uma
-              plataforma simples e acessível.
+              A ASA Inc conecta estudantes, mentores e universitários para ajudar
+              quem está se preparando para Medicina, Veterinária, Engenharias,
+              universidades públicas, concursos militares, carreiras policiais e
+              desafios da faculdade.
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-              <PrimaryButton href="/mentores">Quero aprender</PrimaryButton>
+              <PrimaryButton href="/mentores">Encontrar mentor</PrimaryButton>
               <SecondaryButton href="/cadastro">
-                Quero ensinar
+                Quero ser mentor
               </SecondaryButton>
             </div>
           </div>
@@ -49,23 +51,27 @@ export default function HeroSection() {
           <div className="rounded-[2rem] border border-white/10 bg-white/10 p-4 backdrop-blur">
             <div className="rounded-[1.75rem] bg-white/10 p-5 md:p-6">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal-300">
-                SOS Prova
+                ASA Inc
               </p>
+
               <h2 className="mt-3 text-2xl font-bold md:text-3xl">
-                Travou numa matéria agora?
+                Precisa de ajuda para estudar com direção?
               </h2>
+
               <p className="mt-3 text-sm leading-relaxed text-slate-200">
-                Encontre ajuda rápida com tutores disponíveis, veja avaliações
-                e marque seu atendimento com poucos cliques.
+                Encontre mentores para revisar matérias, montar rotina de estudos,
+                corrigir redações, resolver exercícios e se preparar melhor para
+                provas, vestibulares e concursos.
               </p>
 
               <div className="mt-5 rounded-2xl bg-white/10 p-4">
-                <p className="text-sm font-medium">Exemplos de ajuda:</p>
+                <p className="text-sm font-medium">Você pode encontrar ajuda em:</p>
+
                 <ul className="mt-3 space-y-2 text-sm text-slate-200">
-                  <li>• Revisão para prova</li>
-                  <li>• Resolução de exercícios</li>
-                  <li>• Redação e trabalhos</li>
-                  <li>• Programação e lógica</li>
+                  <li>• Medicina, Veterinária e Engenharias</li>
+                  <li>• Redação, matemática, física, química e biologia</li>
+                  <li>• Preparatórios militares e policiais</li>
+                  <li>• Python, Power BI e habilidades práticas</li>
                 </ul>
               </div>
 
@@ -73,7 +79,7 @@ export default function HeroSection() {
                 href="/mentores"
                 className="mt-6 inline-flex rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-sky-950"
               >
-                Buscar tutores
+                Buscar mentores
               </Link>
             </div>
           </div>
