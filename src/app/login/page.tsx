@@ -1,132 +1,123 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
+import { FormEvent, useState } from "react";
 import { signIn } from "next-auth/react";
-import ResponsiveShell from "@/components/layout/ResponsiveShell";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
-  const [form, setForm] = useState({
-    email: "",
-    password: "",
-  });
+  const router = useRouter();
 
-  const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    setMessage("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    setIsLoading(true);
+    setErrorMessage("");
 
     const result = await signIn("credentials", {
-      email: form.email,
-      password: form.password,
+      email,
+      password,
       redirect: false,
     });
 
+    setIsLoading(false);
+
     if (result?.error) {
-      setMessage("Login inválido. Confira seu e-mail e senha.");
-      setLoading(false);
+      setErrorMessage("E-mail ou senha inválidos.");
       return;
     }
 
-    window.location.href = "/dashboard";
+    router.push("/dashboard");
+    router.refresh();
   }
 
   return (
-    <ResponsiveShell mobileActive="profile">
-      <section className="bg-gradient-to-br from-sky-950 via-sky-900 to-cyan-800 px-5 pb-10 pt-8 text-white md:px-8 md:pb-14 md:pt-12">
-        <div className="mx-auto max-w-7xl">
-          <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
-            <div className="max-w-2xl">
-              <p className="text-sm font-medium tracking-wide text-cyan-200">
-                ASA Inc.
-              </p>
-              <h1 className="mt-3 text-4xl font-bold leading-tight md:text-5xl">
-                Entre na sua conta
-              </h1>
-              <p className="mt-4 max-w-xl text-base leading-relaxed text-slate-200 md:text-lg">
-                Acesse sua área para acompanhar pedidos, mensagens, avaliações e
-                toda sua experiência dentro da plataforma.
-              </p>
+    <main className="min-h-screen bg-slate-950 px-4 py-10 text-white">
+      <div className="mx-auto flex min-h-[calc(100vh-80px)] w-full max-w-md items-center justify-center">
+        <section className="w-full rounded-2xl border border-slate-800 bg-slate-900 p-6 shadow-2xl">
+          <div className="mb-8 text-center">
+            <h1 className="text-3xl font-bold text-white">Entrar</h1>
 
-              <div className="mt-6 rounded-3xl border border-white/10 bg-white/10 p-5 backdrop-blur md:mt-8 md:p-6">
-                <p className="text-sm text-slate-200">
-                  Com sua conta, você pode:
-                </p>
-
-                <ul className="mt-4 space-y-3 text-sm text-slate-100">
-                  <li>• acompanhar pedidos em tempo real</li>
-                  <li>• conversar com mentores pelo chat</li>
-                  <li>• organizar sua jornada acadêmica</li>
-                </ul>
-              </div>
-            </div>
-
-            <div className="rounded-[2rem] border border-white/10 bg-white/10 p-3 backdrop-blur md:p-4">
-              <div className="rounded-[1.7rem] bg-white p-6 shadow-2xl md:p-8">
-                <h2 className="text-2xl font-bold text-slate-900">Entrar</h2>
-                <p className="mt-2 text-sm text-slate-600">
-                  Preencha seus dados para acessar sua conta.
-                </p>
-
-                <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-                  <div>
-                    <label className="mb-2 block text-sm font-medium text-slate-700">
-                      E-mail
-                    </label>
-                    <input
-                      className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-sky-700"
-                      placeholder="seuemail@email.com"
-                      value={form.email}
-                      onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    />
-                  </div>
-
-                  <div>
-                    <label className="mb-2 block text-sm font-medium text-slate-700">
-                      Senha
-                    </label>
-                    <input
-                      type="password"
-                      className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-sky-700"
-                      placeholder="Sua senha"
-                      value={form.password}
-                      onChange={(e) =>
-                        setForm({ ...form, password: e.target.value })
-                      }
-                    />
-                  </div>
-
-                  <button
-                    disabled={loading}
-                    className="w-full rounded-2xl bg-slate-900 px-4 py-3 font-semibold text-white transition hover:bg-slate-800 disabled:opacity-70"
-                  >
-                    {loading ? "Entrando..." : "Entrar"}
-                  </button>
-                </form>
-
-                {message ? (
-                  <p className="mt-4 rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-700">
-                    {message}
-                  </p>
-                ) : null}
-
-                <div className="mt-6 text-center text-sm text-slate-600">
-                  Ainda não tem conta?{" "}
-                  <Link
-                    href="/cadastro"
-                    className="font-semibold text-sky-900 hover:text-sky-700"
-                  >
-                    Criar conta
-                  </Link>
-                </div>
-              </div>
-            </div>
+            <p className="mt-2 text-sm text-slate-300">
+              Acesse sua conta da ASA Inc.
+            </p>
           </div>
-        </div>
-      </section>
-    </ResponsiveShell>
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <label
+                htmlFor="email"
+                className="mb-2 block text-sm font-medium text-slate-200"
+              >
+                E-mail
+              </label>
+
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                placeholder="Digite seu e-mail"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                required
+                className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-950 placeholder:text-slate-400 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="password"
+                className="mb-2 block text-sm font-medium text-slate-200"
+              >
+                Senha
+              </label>
+
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autoComplete="current-password"
+                placeholder="Digite sua senha"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                required
+                className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-950 placeholder:text-slate-400 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            {errorMessage && (
+              <div className="rounded-xl border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+                {errorMessage}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full rounded-xl bg-blue-600 px-4 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-70"
+            >
+              {isLoading ? "Entrando..." : "Entrar"}
+            </button>
+          </form>
+
+          <div className="mt-6 text-center text-sm text-slate-300">
+            Ainda não tem conta?{" "}
+            <Link
+              href="/register"
+              className="font-semibold text-blue-400 hover:text-blue-300"
+            >
+              Criar conta
+            </Link>
+          </div>
+        </section>
+      </div>
+    </main>
   );
 }
