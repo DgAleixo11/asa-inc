@@ -47,6 +47,17 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Acesso negado" }, { status: 403 });
     }
 
+    const mentorProfile = await prisma.mentorProfile.findUnique({
+      where: { userId: order.mentorId },
+    });
+
+    if (!mentorProfile) {
+      return NextResponse.json(
+        { error: "Perfil do mentor não encontrado" },
+        { status: 404 }
+      );
+    }
+
     const existingApprovedPayment = order.payments.find(
       (payment) => payment.status === "APPROVED"
     );
@@ -61,12 +72,12 @@ export async function POST(req: Request) {
     const valueTotal =
       order.valueTotal ??
       order.totalPrice ??
-      Number(order.mentor.pricePerHour);
+      Number(mentorProfile.pricePerHour);
 
     const asaCommission = Number(
-      (valueTotal * ASA_COMMISSION_RATE).toFixed(2)
+      (Number(valueTotal) * ASA_COMMISSION_RATE).toFixed(2)
     );
-    const mentorValue = Number((valueTotal - asaCommission).toFixed(2));
+    const mentorValue = Number((Number(valueTotal) - asaCommission).toFixed(2));
     const externalReference = `order_${order.id}_${Date.now()}`;
 
     const payment = await mercadoPagoPayment.create({
